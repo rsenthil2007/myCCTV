@@ -79,7 +79,7 @@ class MainActivity : AppCompatActivity() {
     private var isManualResolutionMode = false
     private var isUnlimitedFpsSelected = false
     private var isPanelOpen = true
-    private var isChineseUi = true
+    private var isChineseUi = false
     private var activeSkin: UiSkin = UiSkin.GREEN
     private var hasLoadedCameraOptions = false
     private var statusMode: StatusMode = StatusMode.IDLE
@@ -373,6 +373,7 @@ class MainActivity : AppCompatActivity() {
                 updateControlSurfaceMode()
             }
         }
+        binding.languageToggleButton.visibility = View.GONE
         binding.languageToggleButton.setOnClickListener { toggleLanguage() }
         binding.skinToggleButton.setOnClickListener { toggleSkin() }
         binding.preset1080p30Button.setOnClickListener { applyStreamPreset(StreamControlOptions.preset1080p30) }
@@ -1279,11 +1280,7 @@ class MainActivity : AppCompatActivity() {
         binding.manualResolutionHintText.text = if (resolved.width == width && resolved.height == height) {
             defaultManualResolutionHint()
         } else {
-            if (isChineseUi) {
-                "闂佽娴烽幊鎾诲箟闄囬妵鎰板礃椤忓啰鍓ㄥ銈嗘磵閸嬫捇鏌＄仦鏂ゅ伐妞ゆ挸銈稿畷鍗炍熼崷顓炵闂傚倷娴囬～澶嬬娴犲纾块悗闈涙啞瀹曟煡骞栧ǎ顒€濡介柛搴＄Ч閺屾盯寮撮妸銉ヮ潽闂佸搫妫欑划鎾诲蓟閻斿吋鈷愰柟閭﹀櫘濡差噣姊洪崫鍕仼闁稿﹤顭烽崺鈧? ${cameraRepository.sizeLabel(resolved)}"
-            } else {
-                "Nearest supported size matched: ${cameraRepository.sizeLabel(resolved)}"
-            }
+            "Nearest supported size matched: ${cameraRepository.sizeLabel(resolved)}"
         }
         if (resolved.width != width || resolved.height != height) {
             binding.manualResolutionHintText.text = localizedText(
@@ -1308,11 +1305,7 @@ class MainActivity : AppCompatActivity() {
                 if (resolved.width == width && resolved.height == height) {
                     "Manual resolution applied"
                 } else {
-                    if (isChineseUi) {
-                        "婵犵數鍋犻幓顏嗙礊閳ь剚绻涙径瀣鐎殿噮鍋婃俊鑸靛緞婵犲倻褰夐梻渚€鈧偛鑻晶瀛橆殽閻愭潙娴┑锛勫厴婵℃瓕顦存い鏂挎嚇濮婂搫效閸パ冾瀳闁诲孩鍑归崣鍐嚕椤愶富鏁嬮柍褜鍓熼悰顕€骞囬鐔奉€撻梺鍛婄☉閿曘儵锝為崨瀛樼厽?${cameraRepository.sizeLabel(resolved)}"
-                    } else {
-                        "Using nearest supported size ${cameraRepository.sizeLabel(resolved)}"
-                    }
+                    "Using nearest supported size ${cameraRepository.sizeLabel(resolved)}"
                 }
             )
         }

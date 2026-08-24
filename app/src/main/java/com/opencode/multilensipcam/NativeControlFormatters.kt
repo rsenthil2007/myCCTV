@@ -32,9 +32,9 @@ object NativeControlFormatters {
         return if (value == null || value < 0.01f) infinityText(isChineseUi) else String.format("%.2f diopters", value)
     }
 
-    fun unavailableText(isChineseUi: Boolean): String = if (isChineseUi) "\u4e0d\u53ef\u7528" else "Unavailable"
+    fun unavailableText(isChineseUi: Boolean): String = "Unavailable"
 
-    fun infinityText(isChineseUi: Boolean): String = if (isChineseUi) "\u65e0\u9650\u8fdc" else "Infinity"
+    fun infinityText(isChineseUi: Boolean): String = "Infinity"
 
     fun formatExposure(value: Int): String {
         return if (value == 0) "0 EV" else "$value EV"

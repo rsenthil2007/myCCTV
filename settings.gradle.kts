@@ -14,5 +14,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "LensCast"
+rootProject.name = "myCCTV"
 include(":app")

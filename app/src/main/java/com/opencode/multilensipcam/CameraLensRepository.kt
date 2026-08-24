@@ -609,10 +609,10 @@ class CameraLensRepository(private val cameraManager: CameraManager) {
 
     private fun displayFacingLabel(characteristics: CameraCharacteristics): String {
         return when (characteristics.get(CameraCharacteristics.LENS_FACING)) {
-            CameraCharacteristics.LENS_FACING_BACK -> "后摄"
-            CameraCharacteristics.LENS_FACING_FRONT -> "前摄"
-            CameraCharacteristics.LENS_FACING_EXTERNAL -> "外接摄像头"
-            else -> "摄像头"
+            CameraCharacteristics.LENS_FACING_BACK -> "Rear"
+            CameraCharacteristics.LENS_FACING_FRONT -> "Front"
+            CameraCharacteristics.LENS_FACING_EXTERNAL -> "External camera"
+            else -> "Camera"
         }
     }
 

@@ -4,6 +4,7 @@ object WebMediaHeaders {
     fun snapshot(contentLength: Int): String {
         return buildString {
             append("HTTP/1.1 200 OK\r\n")
+            append(WebHttpResponses.CORS_HEADERS)
             append("Content-Type: image/jpeg\r\n")
             append("Content-Length: $contentLength\r\n")
             append("Connection: close\r\n")
@@ -15,6 +16,7 @@ object WebMediaHeaders {
     fun frozenSnapshot(contentLength: Long, snapshotId: String): String {
         return buildString {
             append("HTTP/1.1 200 OK\r\n")
+            append(WebHttpResponses.CORS_HEADERS)
             append("Content-Type: image/jpeg\r\n")
             append("Content-Length: $contentLength\r\n")
             append("Connection: close\r\n")
@@ -27,6 +29,7 @@ object WebMediaHeaders {
     fun mjpegStream(boundary: String): String {
         return buildString {
             append("HTTP/1.1 200 OK\r\n")
+            append(WebHttpResponses.CORS_HEADERS)
             append("Connection: close\r\n")
             append("Cache-Control: no-store\r\n")
             append("Pragma: no-cache\r\n")
@@ -72,6 +75,7 @@ object WebMediaHeaders {
     fun h264Stream(): String {
         return buildString {
             append("HTTP/1.1 200 OK\r\n")
+            append(WebHttpResponses.CORS_HEADERS)
             append("Connection: close\r\n")
             append("Cache-Control: no-store\r\n")
             append("Pragma: no-cache\r\n")
@@ -83,6 +87,7 @@ object WebMediaHeaders {
     fun aacStream(): String {
         return buildString {
             append("HTTP/1.1 200 OK\r\n")
+            append(WebHttpResponses.CORS_HEADERS)
             append("Connection: close\r\n")
             append("Cache-Control: no-store\r\n")
             append("Pragma: no-cache\r\n")

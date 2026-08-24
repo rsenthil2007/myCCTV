@@ -94,10 +94,10 @@ object VerifiedCameraEntries {
         isChineseUi: Boolean
     ): String {
         val baseLabel = when (lensFacing) {
-            "Front" -> if (isChineseUi) "\u524d\u6444" else "Front"
-            "Back" -> if (isChineseUi) "\u540e\u6444 ${rearIndex ?: 1}" else "Rear ${rearIndex ?: 1}"
-            "External" -> if (isChineseUi) "\u5916\u63a5\u6444\u50cf\u5934" else "External camera"
-            else -> if (isChineseUi) "\u6444\u50cf\u5934" else "Camera"
+            "Front" -> "Front"
+            "Back" -> "Rear ${rearIndex ?: 1}"
+            "External" -> "External camera"
+            else -> "Camera"
         }
         return buildString {
             append(baseLabel)

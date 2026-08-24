@@ -13,11 +13,11 @@ android {
     val localDebugKeystore = rootProject.file(".android/debug.keystore")
 
     defaultConfig {
-        applicationId = "com.opencode.multilensipcam"
+        applicationId = "com.mycctv.app"
         minSdk = 25
         targetSdk = 34
-        versionCode = 100
-        versionName = "0.5.31"
+        versionCode = 101
+        versionName = "1.0.0-mycctv"
     }
 
     signingConfigs {
@@ -77,8 +77,8 @@ val archiveDebugApkOutputs = {
         .format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss"))
     val versionName = android.defaultConfig.versionName ?: "0.0.0"
     val versionCode = android.defaultConfig.versionCode ?: 0
-    val archiveName = "LensCast-debug-v$versionName-$versionCode-$timestamp.apk"
-    val latestName = "LensCast-debug-latest.apk"
+    val archiveName = "myCCTV-debug-v$versionName-$versionCode-$timestamp.apk"
+    val latestName = "myCCTV-debug-latest.apk"
 
     copy {
         from(sourceApk)
@@ -87,7 +87,7 @@ val archiveDebugApkOutputs = {
     }
 
     delete(fileTree(rootDir) {
-        include("LensCast-debug-latest*.apk")
+        include("myCCTV-debug-latest*.apk")
     })
 
     copy {

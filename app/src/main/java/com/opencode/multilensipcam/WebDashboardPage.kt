@@ -4,11 +4,11 @@ object WebDashboardPage {
     fun render(versionLabel: String): String {
         return """
             <!doctype html>
-            <html lang="zh-CN">
+            <html lang="en">
             <head>
               <meta charset="utf-8">
               <meta name="viewport" content="width=device-width, initial-scale=1">
-              <title>全镜直播(LensCast)</title>
+              <title>myCCTV</title>
               <style>
                 :root {
                   color-scheme: dark;
@@ -514,14 +514,10 @@ object WebDashboardPage {
               <div class="shell">
                 <div class="topbar">
                   <div>
-                    <h1>全镜直播(LensCast)</h1>
+                    <h1>myCCTV</h1>
                     <p id="versionText">${versionLabel}</p>
                   </div>
                   <div class="top-actions">
-                    <nav class="language-switcher" aria-label="Language">
-                      <button type="button" data-lang="en">EN</button>
-                      <button type="button" data-lang="zh">中文</button>
-                    </nav>
                     <nav class="theme-switcher" aria-label="Theme preview">
                       <button class="green" type="button" data-skin="" title="Green"></button>
                       <button class="sunrise" type="button" data-skin="skin-sunrise" title="Orange"></button>
@@ -734,15 +730,14 @@ object WebDashboardPage {
                   button.addEventListener('click', () => {
                     document.body.classList.remove(...skins);
                     if (button.dataset.skin) document.body.classList.add(button.dataset.skin);
-                    try { localStorage.setItem('multilensSkin', button.dataset.skin || ''); } catch (_) {}
+                    try { localStorage.setItem('mycctvSkin', button.dataset.skin || ''); } catch (_) {}
                   });
                 });
                 try {
-                  const savedSkin = localStorage.getItem('multilensSkin');
+                  const savedSkin = localStorage.getItem('mycctvSkin');
                   if (savedSkin) document.body.classList.add(savedSkin);
                 } catch (_) {}
 
-                const languageButtons = document.querySelectorAll('[data-lang]');
                 const copy = {
                   en: {
                     loadingState: 'Loading camera state...',
@@ -857,8 +852,7 @@ object WebDashboardPage {
                     profileEntry: 'built-in',
                     sourceProfile: 'profile',
                     sourceScan: 'scan'
-                  },
-                  zh: {}
+                  }
                 };
                 copy.en.video = 'Video';
                 copy.en.zoom = 'Zoom';
@@ -868,150 +862,20 @@ object WebDashboardPage {
                 copy.en.autoFocusShort = 'Auto';
                 copy.en.manualFocusShort = 'Manual';
                 copy.en.evUnit = 'EV';
-                Object.assign(copy.zh, {
-                  loadingState: '正在加载摄像头状态...',
-                  livePreview: '实时预览',
-                  previewHint: '浏览器中的 MJPEG 实时画面与控制。',
-                  previewLive: '来自 /video 的 MJPEG 实时画面。',
-                  previewIdle: '当前未直播。保持此页面开启后点击开始直播。',
-                  checkingStream: '正在检查直播状态...',
-                  openMjpeg: '打开 MJPEG',
-                  copyH264: '复制 RTSP 地址',
-                  copyAudio: '复制音频地址',
-                  h264Hint: 'RTSP 可用于 VLC、NVR、ffplay、OBS 等，浏览器直接预览请使用 MJPEG。',
-                  openAudio: '打开音频 AAC',
-                  closeAudio: '关闭音频',
-                  audio: '音频',
-                  enableMicAudio: '启用麦克风 AAC',
-                  audioCompatibility: '“打开音频 AAC”会先启用麦克风，再打开原始 AAC 流。是否可播放取决于浏览器，且与视频不同步。',
-                  audioDisabled: '音频已关闭',
-                  openingAudio: '正在打开音频...',
-                  enablingAudio: '正在启用音频...',
-                  audioWaiting: '正在等待麦克风音频...',
-                  audioReady: '音频已就绪，开始播放...',
-                  audioNeedsPermission: '需要麦克风权限。请先在手机上授予 RECORD_AUDIO。',
-                  audioNeedsStreaming: '请先开始视频直播，再打开麦克风音频。',
-                  audioUnsupported: '此设备不支持麦克风音频。',
-                  audioEnableFailed: '音频未能启动，请检查直播状态与麦克风权限。',
-                  closingAudio: '正在关闭音频...',
-                  audioPlaying: '此页面正在播放音频。',
-                  audioAutoplayBlocked: '音频已就绪，但浏览器阻止了自动播放。',
-                  copied: '已复制',
-                  copyFailed: '复制失败',
-                  snapshot: '抓拍',
-                  startStreaming: '开始直播',
-                  starting: '正在开始...',
-                  stopStreaming: '停止直播',
-                  stopping: '正在停止...',
-                  configuration: '配置',
-                  loading: '加载中',
-                  camera: '摄像头',
-                  recommendedSettings: '推荐设置',
-                  video: '视频',
-                  videoProfile: '视频配置',
-                  resolution: '分辨率',
-                  manualResolutionHint: '输入自定义尺寸并应用最接近的受支持分辨率。',
-                  manualResolutionActive: '当前为自定义输入模式，应用会选择最接近的受支持尺寸。',
-                  applyCustomResolution: '应用自定义分辨率',
-                  frameRate: '帧率',
-                  unlimitedFps: '不限帧率',
-                  streamQuality: '推流质量',
-                  compressionBitrate: '压缩率 / 码率',
-                  lensFocus: '镜头与对焦',
-                  zoom: '变焦',
-                  zoomRatio: '变焦倍率',
-                  focusMode: '对焦模式',
-                  autoFocus: '自动对焦',
-                  manualFocus: '手动对焦',
-                  autoFocusShort: '自动',
-                  manualFocusShort: '手动',
-                  lightExposure: '补光与曝光',
-                  fillLight: '补光',
-                  videoOverlay: '视频叠加层',
-                  videoOverlaySize: '叠加层尺寸',
-                  torch: '手电筒 / 补光灯',
-                  focusDistance: '对焦距离',
-                  exposure: '曝光',
-                  exposureCompensation: '曝光补偿',
-                  unavailable: '不可用。',
-                  unavailableCamera: '当前摄像头不支持。',
-                  zoomUnavailable: '当前摄像头不支持变焦。',
-                  torchAvailable: '直播期间可开关补光灯。',
-                  manualFocusAvailable: '手动对焦模式下可用。',
-                  infinity: '无限远',
-                  nearestFocus: '最近',
-                  focusDistanceRange: '0 = 无限远，最大值 = 最近对焦',
-                  streaming: '直播中',
-                  idle: '空闲',
-                  stateOk: '状态正常',
-                  stateUnavailable: '状态不可用',
-                  unavailableShort: '不可用',
-                  range: '范围',
-                  to: '到',
-                  evUnit: 'EV',
-                  evSteps: 'EV 步进',
-                  width: '宽度',
-                  height: '高度',
-                  cameraFallback: '摄像头',
-                  fpsSuffix: ' fps',
-                  diopters: ' 屈光度',
-                  manualInput: '手动输入',
-                  previewTuning: 'App 预览调校',
-                  previewRotation: '旋转偏移',
-                  previewRotationHint: '仅在 App 预览方向错误时使用。',
-                  previewScale: '缩放',
-                  previewScaleHint: '100% 为默认适配计算值。',
-                  previewStretchX: '横向比例',
-                  previewStretchY: '纵向比例',
-                  previewStretchHint: '可用比例控制来修正拉伸观感。',
-                  previewFeedback: '请将此反馈字符串返回给 Codex。',
-                  resetPreviewTuning: '重置预览调校',
-                  cameraDebug: '摄像头调试',
-                  scanCameras: '扫描摄像头',
-                  refreshCameras: '刷新列表',
-                  verifiedCameras: '已验证摄像头',
-                  selectVerifiedCamera: '选择已验证摄像头',
-                  verifiedCameraIdle: '已验证摄像头缓存仅保存在本机。',
-                  scanningCameras: '正在扫描摄像头...',
-                  scanComplete: '摄像头扫描完成。',
-                  noVerifiedCameras: '暂无已保存的验证摄像头。',
-                  clearScanCache: '清除本地扫描缓存',
-                  scanCacheCleared: '本地扫描缓存已清除。',
-                  deleteScanEntry: '删除',
-                  profileEntry: '内置',
-                  sourceProfile: '配置',
-                  sourceScan: '扫描'
-                });
-                let currentLang = 'zh';
-                try {
-                  currentLang = localStorage.getItem('multilensLanguage') || 'zh';
-                } catch (_) {}
-                if (!copy[currentLang]) currentLang = 'zh';
+                const currentLang = 'en';
 
                 function t(key) {
-                  return (copy[currentLang] && copy[currentLang][key]) || copy.en[key] || key;
+                  return copy.en[key] || key;
                 }
 
                 function applyLanguage() {
-                  document.documentElement.lang = currentLang === 'zh' ? 'zh-CN' : 'en';
+                  document.documentElement.lang = 'en';
                   document.querySelectorAll('[data-i18n]').forEach(element => {
                     element.textContent = t(element.dataset.i18n);
                   });
                   manualWidthInput.placeholder = t('width');
                   manualHeightInput.placeholder = t('height');
-                  languageButtons.forEach(button => {
-                    button.classList.toggle('active', button.dataset.lang === currentLang);
-                  });
                 }
-
-                languageButtons.forEach(button => {
-                  button.addEventListener('click', () => {
-                    currentLang = button.dataset.lang || 'en';
-                    try { localStorage.setItem('multilensLanguage', currentLang); } catch (_) {}
-                    applyLanguage();
-                    refreshState();
-                  });
-                });
 
                 const stateCache = {
                   streaming: false,
@@ -1975,11 +1839,11 @@ object WebDashboardPage {
         val currentAssets = assets(versionLabel)
         return """
             <!doctype html>
-            <html lang="zh-CN">
+            <html lang="en">
             <head>
               <meta charset="utf-8">
               <meta name="viewport" content="width=device-width, initial-scale=1">
-              <title>全镜直播(LensCast)</title>
+              <title>myCCTV</title>
             </head>
             <body>
               <div id="app">Loading…</div>

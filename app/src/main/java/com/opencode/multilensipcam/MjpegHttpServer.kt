@@ -168,11 +168,18 @@ class MjpegHttpServer(
             socket.soTimeout = 15_000
             val reader = socket.getInputStream().bufferedReader()
             val requestLine = reader.readLine() ?: return
+            val requestMethod = requestLine.split(" ").firstOrNull()?.uppercase() ?: "GET"
             val rawTarget = requestLine.split(" ").getOrNull(1) ?: "/"
             val target = rawTarget.substringBefore("?")
             val query = WebHttpQueryParser.parse(rawTarget.substringAfter("?", ""))
             while (reader.readLine()?.isNotEmpty() == true) {
                 // Drain request headers.
+            }
+
+            if (requestMethod == "OPTIONS") {
+                WebHttpResponses.writeOptions(diagnosticOutput())
+                shouldGracefullyFinishFiniteResponse = true
+                return
             }
 
             val frozenSnapshotId = WebHttpRoutes.frozenSnapshotId(target)

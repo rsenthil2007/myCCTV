@@ -50,7 +50,6 @@ object WebResolutionSelections {
     }
 
     private fun isManualResolutionLabel(label: String): Boolean {
-        return label.equals("Manual input", ignoreCase = true) ||
-            label == "\u624b\u52a8\u8f93\u5165"
+        return label.equals("Manual input", ignoreCase = true)
     }
 }

@@ -4,10 +4,29 @@ import java.io.OutputStream
 import java.nio.charset.StandardCharsets
 
 object WebHttpResponses {
+    const val CORS_HEADERS =
+        "Access-Control-Allow-Origin: *\r\n" +
+            "Access-Control-Allow-Methods: GET, OPTIONS\r\n" +
+            "Access-Control-Allow-Headers: *\r\n"
+
+    fun writeOptions(output: OutputStream) {
+        val header = buildString {
+            append("HTTP/1.1 204 No Content\r\n")
+            append(CORS_HEADERS)
+            append("Access-Control-Max-Age: 86400\r\n")
+            append("Content-Length: 0\r\n")
+            append("Connection: close\r\n")
+            append("\r\n")
+        }
+        output.write(header.toByteArray(StandardCharsets.UTF_8))
+        output.flush()
+    }
+
     fun writeText(output: OutputStream, body: String, contentType: String) {
         val bytes = body.toByteArray(StandardCharsets.UTF_8)
         val header = buildString {
             append("HTTP/1.1 200 OK\r\n")
+            append(CORS_HEADERS)
             append("Content-Type: $contentType\r\n")
             append("Content-Length: ${bytes.size}\r\n")
             append("Connection: close\r\n")
@@ -30,6 +49,7 @@ object WebHttpResponses {
         val bytes = message.toByteArray(StandardCharsets.UTF_8)
         val header = buildString {
             append("HTTP/1.1 404 Not Found\r\n")
+            append(CORS_HEADERS)
             append("Content-Type: text/plain; charset=utf-8\r\n")
             append("Content-Length: ${bytes.size}\r\n")
             append("Connection: close\r\n")
@@ -44,6 +64,7 @@ object WebHttpResponses {
         val bytes = message.toByteArray(StandardCharsets.UTF_8)
         val header = buildString {
             append("HTTP/1.1 503 Service Unavailable\r\n")
+            append(CORS_HEADERS)
             append("Content-Type: text/plain; charset=utf-8\r\n")
             append("Content-Length: ${bytes.size}\r\n")
             append("Connection: close\r\n")
@@ -57,6 +78,7 @@ object WebHttpResponses {
     fun writeRedirect(output: OutputStream, location: String) {
         val header = buildString {
             append("HTTP/1.1 302 Found\r\n")
+            append(CORS_HEADERS)
             append("Location: $location\r\n")
             append("Content-Length: 0\r\n")
             append("Connection: close\r\n")

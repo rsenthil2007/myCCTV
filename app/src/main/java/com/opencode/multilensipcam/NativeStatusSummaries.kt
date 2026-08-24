@@ -21,7 +21,7 @@ object NativeStatusSummaries {
         isChineseUi: Boolean
     ): String {
         return when {
-            unlimitedFpsSelected -> localizedText(isChineseUi, "Unlimited", "\u4e0d\u9650")
+            unlimitedFpsSelected -> "Unlimited"
             selectedTargetFps != null -> "${selectedTargetFps}fps"
             else -> "-"
         }
@@ -32,7 +32,7 @@ object NativeStatusSummaries {
         appVersionLabel: String,
         isChineseUi: Boolean
     ): String {
-        val prefix = if (isChineseUi) "\u6b63\u5728\u76f4\u64ad" else "Live"
+        val prefix = "Live"
         return "$prefix\n$parameterSummary\n$appVersionLabel"
     }
 
@@ -53,6 +53,6 @@ object NativeStatusSummaries {
     }
 
     private fun localizedText(isChineseUi: Boolean, english: String, chinese: String): String {
-        return if (isChineseUi) chinese else english
+        return english
     }
 }

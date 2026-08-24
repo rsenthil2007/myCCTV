@@ -118,6 +118,6 @@ object CameraOptionPresentation {
     }
 
     private fun localizedText(isChineseUi: Boolean, english: String, chinese: String): String {
-        return if (isChineseUi) chinese else english
+        return english
     }
 }
