@@ -1,0 +1,1319 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_app_gradient">
+
+    <!-- Preview canvas plus live-mode overlay chrome. -->
+    <FrameLayout
+        android:id="@+id/previewStage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.opencode.multilensipcam.AutoFitTextureView
+            android:id="@+id/previewView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center" />
+
+        <View
+            android:id="@+id/previewScrimView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_preview_scrim" />
+
+        <LinearLayout
+            android:id="@+id/headerCard"
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            android:gravity="top"
+            android:orientation="vertical"
+            android:paddingStart="18dp"
+            android:paddingTop="18dp"
+            android:paddingEnd="120dp"
+            android:paddingBottom="12dp">
+
+            <TextView
+                android:id="@+id/appTitleText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/ui_controls_zh"
+                android:textColor="@color/ui_text_primary"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/heroSubtitleText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/ui_current_setup_zh"
+                android:textColor="@color/ui_text_secondary"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/modeBadgeText"
+                android:layout_width="wrap_content"
+                android:layout_height="28dp"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_chip_surface"
+                android:gravity="center"
+                android:minWidth="72dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:text="@string/ui_ready_zh"
+                android:textColor="@color/ui_accent_soft"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/quickSettingsBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|end"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="14dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/languageToggleButton"
+                android:layout_width="wrap_content"
+                android:layout_height="38dp"
+                android:background="@drawable/bg_tool_button"
+                android:contentDescription="Language"
+                android:gravity="center"
+                android:minWidth="48dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:text="中 / EN"
+                android:textColor="@color/ui_text_primary"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <FrameLayout
+                android:id="@+id/skinToggleButton"
+                android:layout_width="42dp"
+                android:layout_height="38dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_tool_button"
+                android:contentDescription="Skin">
+
+                <View
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/bg_skin_dot" />
+            </FrameLayout>
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/settingsButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="top|end"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="12dp"
+            android:background="@drawable/bg_chip_surface"
+            android:contentDescription="Open controls"
+            android:padding="12dp"
+            android:src="@android:drawable/ic_menu_manage"
+            android:tint="@color/ui_text_primary"
+            android:visibility="gone" />
+
+        <ImageButton
+            android:id="@+id/blackoutButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="top|end"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="68dp"
+            android:background="@drawable/bg_chip_surface"
+            android:contentDescription="@string/ui_blackout_mode"
+            android:padding="12dp"
+            android:src="@drawable/ic_blackout_mode"
+            android:tint="@color/ui_text_primary"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/bottomInfoCard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            android:layout_marginStart="14dp"
+            android:layout_marginBottom="14dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/statusText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ui_idle_zh"
+                android:textColor="@color/ui_text_primary" />
+
+            <TextView
+                android:id="@+id/sessionInfoText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ui_lens_summary_zh"
+                android:textColor="@color/ui_text_secondary" />
+
+            <TextView
+                android:id="@+id/urlText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ui_dashboard_not_started_zh"
+                android:textColor="@color/ui_text_primary"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/liveStatusCard"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="14dp"
+            android:layout_marginBottom="14dp"
+            android:gravity="end"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/liveStatusLine1Text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAlignment="viewEnd"
+                android:textColor="@color/ui_text_primary"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/liveStatusLine2Text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAlignment="viewEnd"
+                android:textColor="@color/ui_text_secondary"
+                android:textSize="11sp" />
+        </LinearLayout>
+    </FrameLayout>
+
+    <!-- Portrait control surface; hidden/repositioned while landscape streaming. -->
+    <LinearLayout
+        android:id="@+id/controlSurface"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="160dp"
+        android:layout_marginEnd="12dp"
+        android:background="@drawable/bg_panel_surface"
+        android:elevation="10dp"
+        android:orientation="vertical"
+        android:paddingStart="12dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="10dp">
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/controlScroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:fillViewport="false"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="16dp">
+
+                <View
+                    android:id="@+id/panelHandle"
+                    android:layout_width="44dp"
+                    android:layout_height="4dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/bg_panel_handle" />
+
+                <!-- Control header, current session summary, and compact stop action. -->
+                <LinearLayout
+                    android:id="@+id/controlHeader"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/ui_current_setup_zh"
+                            android:textColor="@color/ui_text_primary"
+                            android:textSize="17sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/capabilityText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="3dp"
+                            android:ellipsize="end"
+                            android:maxLines="2"
+                            android:text="@string/ui_camera_capabilities_zh"
+                            android:textColor="@color/ui_text_secondary"
+                            android:textSize="11sp" />
+
+                        <TextView
+                            android:id="@+id/versionText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="@string/ui_version_zh"
+                            android:textColor="@color/ui_text_muted"
+                            android:textSize="10sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/panelStateChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="28dp"
+                        android:background="@drawable/bg_chip_surface"
+                        android:gravity="center"
+                        android:minWidth="64dp"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:text="@string/ui_ready_zh"
+                        android:textColor="@color/ui_text_primary"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        android:visibility="gone" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/stopButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="38dp"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/bg_button_stop"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:minHeight="0dp"
+                        android:minWidth="76dp"
+                        android:text="@string/ui_stop_streaming_zh"
+                        android:textAllCaps="false"
+                        android:textColor="@color/ui_text_primary"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:visibility="gone"
+                        app:backgroundTint="@null" />
+                </LinearLayout>
+
+                <!-- Recommended presets and primary start action. -->
+                <LinearLayout
+                    android:id="@+id/actionDock"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_preset_group"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                            android:text="@string/ui_recommended_settings_zh"
+                        android:textColor="@color/ui_text_secondary"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:clipToPadding="false"
+                        android:overScrollMode="never"
+                        android:scrollbars="none">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/preset1080p30Button"
+                                android:layout_width="wrap_content"
+                                android:layout_height="30dp"
+                                android:background="@drawable/bg_button_primary"
+                                android:insetLeft="0dp"
+                                android:insetTop="0dp"
+                                android:insetRight="0dp"
+                                android:insetBottom="0dp"
+                                android:minHeight="0dp"
+                                android:minWidth="0dp"
+                                android:paddingStart="10dp"
+                                android:paddingEnd="10dp"
+                                android:text="1080p 路 30 fps 路 75%"
+                                android:textAllCaps="false"
+                                android:textColor="@color/ui_bg_base"
+                                android:textSize="11sp"
+                                android:textStyle="bold"
+                                app:backgroundTint="@null" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/preset720p60Button"
+                                android:layout_width="wrap_content"
+                                android:layout_height="30dp"
+                                android:layout_marginStart="8dp"
+                                android:background="@drawable/bg_preset_chip"
+                                android:insetLeft="0dp"
+                                android:insetTop="0dp"
+                                android:insetRight="0dp"
+                                android:insetBottom="0dp"
+                                android:minHeight="0dp"
+                                android:minWidth="0dp"
+                                android:paddingStart="10dp"
+                                android:paddingEnd="10dp"
+                                android:text="720p 路 60 fps"
+                                android:textAllCaps="false"
+                                android:textColor="@color/ui_text_primary"
+                                android:textSize="11sp"
+                                android:textStyle="bold"
+                                app:backgroundTint="@null" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/preset4k30Button"
+                                android:layout_width="wrap_content"
+                                android:layout_height="30dp"
+                                android:layout_marginStart="8dp"
+                                android:background="@drawable/bg_preset_chip"
+                                android:insetLeft="0dp"
+                                android:insetTop="0dp"
+                                android:insetRight="0dp"
+                                android:insetBottom="0dp"
+                                android:minHeight="0dp"
+                                android:minWidth="0dp"
+                                android:paddingStart="10dp"
+                                android:paddingEnd="10dp"
+                                android:text="4K 路 30 fps"
+                                android:textAllCaps="false"
+                                android:textColor="@color/ui_text_primary"
+                                android:textSize="11sp"
+                                android:textStyle="bold"
+                                app:backgroundTint="@null" />
+                        </LinearLayout>
+                    </HorizontalScrollView>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/startButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="46dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/bg_button_primary"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:minHeight="0dp"
+                            android:text="@string/ui_start_streaming_zh"
+                        android:textAllCaps="false"
+                        android:textColor="@color/ui_bg_base"
+                        android:textStyle="bold"
+                        app:backgroundTint="@null" />
+                </LinearLayout>
+
+                <!-- Camera selection chips backed by the hidden spinner. -->
+                <LinearLayout
+                    android:id="@+id/cameraBlock"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_card_surface"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ui_camera_zh"
+                        android:textColor="@color/ui_text_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <HorizontalScrollView
+                        android:id="@+id/cameraChipScroll"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:clipToPadding="false"
+                        android:overScrollMode="never"
+                        android:scrollbars="none">
+
+                        <LinearLayout
+                            android:id="@+id/cameraChipGroup"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/cameraChipPrimary"
+                                android:layout_width="wrap_content"
+                                android:layout_height="34dp"
+                                android:background="@drawable/bg_chip_selected"
+                                android:gravity="center"
+                                android:minWidth="86dp"
+                                android:paddingStart="12dp"
+                                android:paddingEnd="12dp"
+                                android:text="@string/ui_camera_rear_wide_zh"
+                                android:textColor="@color/ui_bg_base"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/cameraChipAux1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="34dp"
+                                android:layout_marginStart="8dp"
+                                android:background="@drawable/bg_preset_chip"
+                                android:gravity="center"
+                                android:minWidth="86dp"
+                                android:paddingStart="12dp"
+                                android:paddingEnd="12dp"
+                                android:text="@string/ui_camera_rear_main_zh"
+                                android:textColor="@color/ui_text_primary"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/cameraChipAux2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="34dp"
+                                android:layout_marginStart="8dp"
+                                android:background="@drawable/bg_preset_chip"
+                                android:gravity="center"
+                                android:minWidth="86dp"
+                                android:paddingStart="12dp"
+                                android:paddingEnd="12dp"
+                                android:text="@string/ui_camera_front_zh"
+                                android:textColor="@color/ui_text_primary"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </HorizontalScrollView>
+
+                    <Spinner
+                        android:id="@+id/cameraSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="0dp"
+                        android:background="@drawable/bg_input_shell"
+                        android:popupBackground="@drawable/bg_card_surface"
+                        android:visibility="invisible" />
+                </LinearLayout>
+
+                <!-- Resolution, fps, and manual-size controls. -->
+                <LinearLayout
+                    android:id="@+id/videoProfileBlock"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_card_surface"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ui_video_profile_zh"
+                        android:textColor="@color/ui_text_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/ui_resolution_zh"
+                                android:textColor="@color/ui_text_secondary"
+                                android:textSize="11sp"
+                                android:textStyle="bold" />
+
+                            <Spinner
+                                android:id="@+id/resolutionSpinner"
+                                android:layout_width="match_parent"
+                                android:layout_height="46dp"
+                                android:layout_marginTop="6dp"
+                                android:background="@drawable/bg_input_shell"
+                                android:popupBackground="@drawable/bg_card_surface" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/ui_frame_rate_zh"
+                                android:textColor="@color/ui_text_secondary"
+                                android:textSize="11sp"
+                                android:textStyle="bold" />
+
+                            <Spinner
+                                android:id="@+id/fpsSpinner"
+                                android:layout_width="match_parent"
+                                android:layout_height="46dp"
+                                android:layout_marginTop="6dp"
+                                android:background="@drawable/bg_input_shell"
+                                android:popupBackground="@drawable/bg_card_surface" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/manualResolutionContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/bg_input_shell"
+                        android:orientation="vertical"
+                        android:padding="10dp"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/manualResolutionHintText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/ui_custom_resolution_hint_zh"
+                            android:textColor="@color/ui_text_muted"
+                            android:textSize="11sp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:orientation="horizontal">
+
+                            <EditText
+                                android:id="@+id/manualWidthInput"
+                                android:layout_width="0dp"
+                                android:layout_height="40dp"
+                                android:layout_weight="1"
+                                android:background="@android:color/transparent"
+                                android:hint="Width"
+                                android:inputType="number"
+                                android:maxLines="1"
+                                android:textColor="@color/ui_text_primary"
+                                android:textColorHint="@color/ui_text_muted" />
+
+                            <EditText
+                                android:id="@+id/manualHeightInput"
+                                android:layout_width="0dp"
+                                android:layout_height="40dp"
+                                android:layout_marginStart="10dp"
+                                android:layout_weight="1"
+                                android:background="@android:color/transparent"
+                                android:hint="Height"
+                                android:inputType="number"
+                                android:maxLines="1"
+                                android:textColor="@color/ui_text_primary"
+                                android:textColorHint="@color/ui_text_muted" />
+                        </LinearLayout>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/applyManualResolutionButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/bg_button_secondary"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            android:minHeight="0dp"
+                            android:text="@string/ui_apply_custom_resolution_zh"
+                            android:textAllCaps="false"
+                            android:textColor="@color/ui_text_primary"
+                            app:backgroundTint="@null" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Quality and focus-mode controls. -->
+                <LinearLayout
+                    android:id="@+id/qualityLensGrid"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/qualityContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_card_surface"
+                        android:orientation="vertical"
+                        android:padding="12dp">
+
+                        <TextView
+                            android:id="@+id/qualityLabel"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/ui_stream_quality_zh"
+                            android:textColor="@color/ui_text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <SeekBar
+                            android:id="@+id/qualitySeekBar"
+                            android:layout_width="match_parent"
+                            android:layout_height="36dp"
+                            android:max="13"
+                            android:progressTint="@color/ui_accent_soft"
+                            android:progressBackgroundTint="@color/ui_stroke"
+                            android:thumbTint="@color/ui_success" />
+
+                        <TextView
+                            android:id="@+id/qualityValueText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="60%"
+                            android:textColor="@color/ui_text_secondary"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/focusBlock"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/bg_card_surface"
+                        android:orientation="vertical"
+                        android:padding="12dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/ui_focus_mode_zh"
+                            android:textColor="@color/ui_text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <HorizontalScrollView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:clipToPadding="false"
+                            android:overScrollMode="never"
+                            android:scrollbars="none">
+
+                            <LinearLayout
+                                android:id="@+id/focusModeChipGroup"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/focusModeChipContinuous"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="34dp"
+                                    android:background="@drawable/bg_chip_selected"
+                                    android:gravity="center"
+                                    android:minWidth="72dp"
+                                    android:paddingStart="12dp"
+                                    android:paddingEnd="12dp"
+                                    android:text="@string/ui_focus_continuous_zh"
+                                    android:textColor="@color/ui_bg_base"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/focusModeChipAuto"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="34dp"
+                                    android:layout_marginStart="8dp"
+                                    android:background="@drawable/bg_preset_chip"
+                                    android:gravity="center"
+                                    android:minWidth="72dp"
+                                    android:paddingStart="12dp"
+                                    android:paddingEnd="12dp"
+                                    android:text="@string/ui_focus_auto_zh"
+                                    android:textColor="@color/ui_text_primary"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/focusModeChipManual"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="34dp"
+                                    android:layout_marginStart="8dp"
+                                    android:background="@drawable/bg_preset_chip"
+                                    android:gravity="center"
+                                    android:minWidth="72dp"
+                                    android:paddingStart="12dp"
+                                    android:paddingEnd="12dp"
+                                    android:text="@string/ui_focus_manual_zh"
+                                    android:textColor="@color/ui_text_primary"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+                        </HorizontalScrollView>
+
+                        <Spinner
+                            android:id="@+id/focusModeSpinner"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginTop="0dp"
+                            android:background="@drawable/bg_input_shell"
+                            android:popupBackground="@drawable/bg_card_surface"
+                            android:visibility="invisible" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Manual focus distance; only visible in manual focus mode. -->
+                <LinearLayout
+                    android:id="@+id/focusDistanceContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_card_surface"
+                    android:orientation="vertical"
+                    android:padding="12dp"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/focusDistanceFarIcon"
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:contentDescription="Far focus"
+                            android:src="@drawable/ic_focus_far"
+                            android:tint="@color/ui_text_secondary" />
+
+                        <SeekBar
+                            android:id="@+id/focusDistanceSeekBar"
+                            android:layout_width="0dp"
+                            android:layout_height="36dp"
+                            android:layout_marginStart="10dp"
+                            android:layout_weight="1"
+                            android:max="1000"
+                            android:progressTint="@color/ui_accent_soft"
+                            android:progressBackgroundTint="@color/ui_stroke"
+                            android:thumbTint="@color/ui_success" />
+
+                        <ImageView
+                            android:id="@+id/focusDistanceNearIcon"
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_marginStart="10dp"
+                            android:contentDescription="Near focus"
+                            android:src="@drawable/ic_focus_near"
+                            android:tint="@color/ui_text_secondary" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/focusDistanceLabel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/focusDistanceValueText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <!-- Zoom and torch controls. -->
+                <LinearLayout
+                    android:id="@+id/exposureLensGrid"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/zoomContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_card_surface"
+                        android:orientation="vertical"
+                        android:padding="12dp"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/zoomLabel"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/ui_zoom_ratio_zh"
+                            android:textColor="@color/ui_text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <SeekBar
+                            android:id="@+id/zoomSeekBar"
+                            android:layout_width="match_parent"
+                            android:layout_height="36dp"
+                            android:max="1000"
+                            android:progressTint="@color/ui_accent_soft"
+                            android:progressBackgroundTint="@color/ui_stroke"
+                            android:thumbTint="@color/ui_success" />
+
+                        <TextView
+                            android:id="@+id/zoomValueText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="1.00x"
+                            android:textColor="@color/ui_text_secondary"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/torchContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/bg_card_surface"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="12dp"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/ui_flashlight_zh"
+                            android:textColor="@color/ui_text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/torchSwitch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/videoOverlayContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/bg_card_surface"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="12dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/ui_video_overlay_zh"
+                            android:textColor="@color/ui_text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/videoOverlaySwitch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/videoOverlaySizeContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/videoOverlaySizeLabel"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/ui_video_overlay_size_zh"
+                                android:textColor="@color/ui_text_primary"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/videoOverlaySizeValueText"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="25"
+                                android:textColor="@color/ui_text_secondary"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+
+                        <SeekBar
+                            android:id="@+id/videoOverlaySizeSeekBar"
+                            android:layout_width="match_parent"
+                            android:layout_height="36dp"
+                            android:max="99"
+                            android:progress="24"
+                            android:progressTint="@color/ui_accent_soft"
+                            android:progressBackgroundTint="@color/ui_stroke"
+                            android:thumbTint="@color/ui_success" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Exposure compensation control. -->
+                <LinearLayout
+                    android:id="@+id/exposureContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_card_surface"
+                    android:orientation="vertical"
+                    android:padding="12dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/exposureLabel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ui_exposure_compensation_zh"
+                        android:textColor="@color/ui_text_primary"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <SeekBar
+                        android:id="@+id/exposureSeekBar"
+                        android:layout_width="match_parent"
+                        android:layout_height="36dp"
+                        android:max="0"
+                        android:progressTint="@color/ui_accent_soft"
+                        android:progressBackgroundTint="@color/ui_stroke"
+                        android:thumbTint="@color/ui_success" />
+
+                    <TextView
+                        android:id="@+id/exposureValueText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="0 EV"
+                        android:textColor="@color/ui_text_secondary"
+                        android:textSize="11sp" />
+                </LinearLayout>
+
+                <!-- Folded camera diagnostics, scan, cache refresh, and report actions. -->
+                <LinearLayout
+                    android:id="@+id/nativeCameraDebugBlock"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_card_surface"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <LinearLayout
+                        android:id="@+id/nativeCameraDebugHeader"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/ui_camera_debug_zh"
+                            android:textColor="@color/ui_text_primary"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/nativeCameraDebugToggleText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="28dp"
+                            android:background="@drawable/bg_preset_chip"
+                            android:gravity="center"
+                            android:minWidth="56dp"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="10dp"
+                            android:text="@string/ui_expand_zh"
+                            android:textColor="@color/ui_text_primary"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/nativeCameraDebugContent"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/nativeCameraScanButton"
+                            android:layout_width="0dp"
+                            android:layout_height="34dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_preset_chip"
+                            android:gravity="center"
+                            android:text="@string/ui_scan_cameras_zh"
+                            android:textColor="@color/ui_text_primary"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/nativeCameraCacheRefreshButton"
+                            android:layout_width="0dp"
+                            android:layout_height="34dp"
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_preset_chip"
+                            android:gravity="center"
+                            android:text="@string/ui_refresh_list_zh"
+                            android:textColor="@color/ui_text_primary"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/nativeCameraReportButton"
+                            android:layout_width="0dp"
+                            android:layout_height="34dp"
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_preset_chip"
+                            android:gravity="center"
+                            android:text="@string/ui_export_report_zh"
+                            android:textColor="@color/ui_text_primary"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/nativeVerifiedCameraList"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:background="@drawable/bg_input_shell"
+                            android:orientation="vertical"
+                            android:padding="10dp">
+
+                            <TextView
+                                android:id="@+id/nativeVerifiedCameraEmptyText"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/ui_verified_camera_empty_zh"
+                                android:textColor="@color/ui_text_muted"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Folded preview tuning controls for device-specific rotation/fit checks. -->
+                <LinearLayout
+                    android:id="@+id/appPreviewTuningBlock"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_card_surface"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <LinearLayout
+                        android:id="@+id/appPreviewTuningHeader"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/ui_app_preview_tuning_zh"
+                            android:textColor="@color/ui_text_primary"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/appPreviewTuningToggleText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="28dp"
+                            android:background="@drawable/bg_preset_chip"
+                            android:gravity="center"
+                            android:minWidth="56dp"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="10dp"
+                            android:text="@string/ui_expand_zh"
+                            android:textColor="@color/ui_text_primary"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/appPreviewTuningContent"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/previewRotationMinusButton"
+                            android:layout_width="0dp"
+                            android:layout_height="34dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_preset_chip"
+                            android:gravity="center"
+                            android:text="@string/ui_rotation_minus_zh"
+                            android:textColor="@color/ui_text_primary"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/previewRotationResetButton"
+                            android:layout_width="0dp"
+                            android:layout_height="34dp"
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_preset_chip"
+                            android:gravity="center"
+                            android:text="@string/ui_reset_zh"
+                            android:textColor="@color/ui_text_primary"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/previewRotationPlusButton"
+                            android:layout_width="0dp"
+                            android:layout_height="34dp"
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_preset_chip"
+                            android:gravity="center"
+                            android:text="@string/ui_rotation_plus_zh"
+                            android:textColor="@color/ui_text_primary"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/previewScaleDownButton"
+                            android:layout_width="0dp"
+                            android:layout_height="34dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_preset_chip"
+                            android:gravity="center"
+                            android:text="@string/ui_scale_down_zh"
+                            android:textColor="@color/ui_text_primary"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/previewScaleResetButton"
+                            android:layout_width="0dp"
+                            android:layout_height="34dp"
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_preset_chip"
+                            android:gravity="center"
+                            android:text="@string/ui_fit_zh"
+                            android:textColor="@color/ui_text_primary"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/previewScaleUpButton"
+                            android:layout_width="0dp"
+                            android:layout_height="34dp"
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_preset_chip"
+                            android:gravity="center"
+                            android:text="@string/ui_scale_up_zh"
+                            android:textColor="@color/ui_text_primary"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Legacy network card kept hidden; URL status lives in the overlay summary. -->
+                <LinearLayout
+                    android:id="@+id/networkCard"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_card_surface"
+                    android:orientation="vertical"
+                    android:padding="12dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ui_network_zh"
+                        android:textColor="@color/ui_text_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/networkSummaryText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="@string/ui_stream_urls_hint_zh"
+                        android:textColor="@color/ui_text_secondary"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </LinearLayout>
+</FrameLayout>
+
