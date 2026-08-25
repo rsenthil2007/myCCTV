@@ -50,6 +50,11 @@
     <string name="ui_wifi_status_disconnected">Wi-Fi not connected</string>
     <string name="ui_stream_urls_hint_en">Wi-Fi status and LAN IP appear here</string>
     <string name="ui_stream_urls_hint_zh">Wi-Fi status and LAN IP appear here</string>
+    <string name="ui_cloud_relay_en">Cloud relay (Interserver)</string>
+    <string name="ui_cloud_relay_url_hint">https://cctv.yourdomain.com</string>
+    <string name="ui_cloud_relay_token_hint">Shared relay token</string>
+    <string name="ui_cloud_relay_save">Save</string>
+    <string name="ui_cloud_relay_enable">Relay</string>
     <string name="ui_preset_1080p_30">1080p 30 fps 75%</string>
     <string name="ui_preset_4k_30">4K 30 fps 60%</string>
     <string name="ui_preset_720p_60">720p 30 fps 100%</string>

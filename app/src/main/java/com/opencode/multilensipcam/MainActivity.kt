@@ -55,6 +55,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var rtspServer: RtspServer
     private lateinit var streamingSession: StreamingSessionController
     private lateinit var webControlCoordinator: WebControlCoordinator
+    private lateinit var cloudRelayClient: CloudRelayClient
     private var blackoutOverlay: View? = null
 
     // Current camera/control selections mirrored by native UI and WebUI.
@@ -248,7 +249,12 @@ class MainActivity : AppCompatActivity() {
         )
         streamer = CameraStreamer(
             cameraManager = cameraManager,
-            onFrame = { server.updateFrame(it) },
+            onFrame = { frame ->
+                server.updateFrame(frame)
+                if (::cloudRelayClient.isInitialized) {
+                    cloudRelayClient.onFrame(frame)
+                }
+            },
             onH264AccessUnit = { accessUnit ->
                 server.updateH264(accessUnit)
                 rtspServer.updateH264(accessUnit)
@@ -256,7 +262,10 @@ class MainActivity : AppCompatActivity() {
             onStatus = ::updateStatus,
             videoOverlayStatusProvider = ::currentVideoOverlayStatus,
             mjpegOutputRotationProvider = ::currentMjpegOutputRotationDegrees,
-            mjpegConsumerActive = { server.hasRecentMjpegClients(MJPEG_IDLE_GRACE_MS) }
+            mjpegConsumerActive = {
+                server.hasRecentMjpegClients(MJPEG_IDLE_GRACE_MS) ||
+                    (::cloudRelayClient.isInitialized && cloudRelayClient.isEnabled())
+            }
         )
         audioStreamer = AudioStreamer(
             onAccessUnit = { accessUnit ->
@@ -318,6 +327,11 @@ class MainActivity : AppCompatActivity() {
             pushRuntimeControlsIfStreaming = ::pushRuntimeControlsIfStreaming,
             updateParameterSummary = ::updateParameterSummary
         )
+        cloudRelayClient = CloudRelayClient(
+            context = this,
+            onCommand = ::applyCloudRelayCommand,
+            onStatus = ::updateStatus
+        )
 
         bindUi()
         binding.versionText.text = appVersionLabel()
@@ -327,6 +341,8 @@ class MainActivity : AppCompatActivity() {
         startLanServers()
         registerLanNetworkCallback()
         updateUrl()
+        bindCloudRelayUi()
+        cloudRelayClient.restoreOnStart()
         updateBatteryStatus(registerReceiver(batteryStatusReceiver, IntentFilter(Intent.ACTION_BATTERY_CHANGED)))
         checkPermissionAndLoad()
     }
@@ -361,6 +377,9 @@ class MainActivity : AppCompatActivity() {
         h264IdleHandler.removeCallbacks(h264IdleStopRunnable)
         mjpegDemandSyncHandler.removeCallbacks(mjpegDemandSyncRunnable)
         unregisterLanNetworkCallback()
+        if (::cloudRelayClient.isInitialized) {
+            cloudRelayClient.shutdown()
+        }
         runCatching { unregisterReceiver(batteryStatusReceiver) }
         super.onDestroy()
     }
@@ -865,6 +884,9 @@ class MainActivity : AppCompatActivity() {
             rtspServer.clearCachedVideoConfig()
         }
         streamingSession.start()
+        if (::cloudRelayClient.isInitialized) {
+            cloudRelayClient.setStreaming(true)
+        }
     }
 
     private fun restartStreaming(reason: String) {
@@ -872,6 +894,9 @@ class MainActivity : AppCompatActivity() {
             rtspServer.clearCachedVideoConfig()
         }
         streamingSession.restart(reason)
+        if (::cloudRelayClient.isInitialized) {
+            cloudRelayClient.setStreaming(true)
+        }
     }
 
     private fun stopStreaming(status: String, keepServerAlive: Boolean = false) {
@@ -879,6 +904,9 @@ class MainActivity : AppCompatActivity() {
             rtspServer.clearCachedVideoConfig()
         }
         streamingSession.stop(status, keepServerAlive)
+        if (::cloudRelayClient.isInitialized) {
+            cloudRelayClient.setStreaming(false)
+        }
     }
 
     private fun handleH264StreamRequest(): Boolean {
@@ -1721,6 +1749,38 @@ class MainActivity : AppCompatActivity() {
         } else {
             lan.wifiStatusLabel
         }
+        if (::cloudRelayClient.isInitialized) {
+            binding.cloudRelayDeviceIdText.text = "Device id  ${cloudRelayClient.deviceId}"
+        }
+    }
+
+    private fun bindCloudRelayUi() {
+        binding.cloudRelayUrlInput.setText(cloudRelayClient.relayBaseUrl)
+        binding.cloudRelayTokenInput.setText(cloudRelayClient.relayToken)
+        binding.cloudRelayDeviceIdText.text = "Device id  ${cloudRelayClient.deviceId}"
+        binding.cloudRelaySwitch.isChecked = cloudRelayClient.isEnabled()
+        binding.cloudRelayApplyButton.setOnClickListener {
+            cloudRelayClient.configure(
+                baseUrl = binding.cloudRelayUrlInput.text?.toString().orEmpty(),
+                token = binding.cloudRelayTokenInput.text?.toString().orEmpty()
+            )
+            binding.cloudRelayDeviceIdText.text = "Device id  ${cloudRelayClient.deviceId}"
+            updateStatus("Cloud relay settings saved")
+        }
+        binding.cloudRelaySwitch.setOnCheckedChangeListener { _, checked ->
+            cloudRelayClient.configure(
+                baseUrl = binding.cloudRelayUrlInput.text?.toString().orEmpty(),
+                token = binding.cloudRelayTokenInput.text?.toString().orEmpty()
+            )
+            cloudRelayClient.setDeviceName(Build.MODEL)
+            cloudRelayClient.setEnabled(checked)
+            cloudRelayClient.setStreaming(isStreaming)
+            binding.cloudRelaySwitch.isChecked = cloudRelayClient.isEnabled()
+        }
+    }
+
+    private fun applyCloudRelayCommand(params: Map<String, String>) {
+        applyWebControls(WebApiQueryParser.controlCommand(params))
     }
 
     private fun updateStatus(message: String) {

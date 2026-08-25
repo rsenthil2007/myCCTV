@@ -38,6 +38,10 @@ Output: `app/build/outputs/apk/debug/app-debug.apk` and `myCCTV-debug-latest.apk
    Or open `http://<phone-ip>:41737/` in a browser for the built-in dashboard.
 5. Press Start live for video. RTSP is available when streaming.
 
+### Internet (HostingRaja + Interserver)
+
+See `cloud-relay/README.md`. Phone pushes low-FPS JPEG to Interserver; HostingRaja dashboard uses **Cloud relay** mode (HTTPS-safe). No media stored on the VPS.
+
 If the remote dashboard says **Failed to fetch**, copy the exact LAN IP from the app, keep myCCTV open, and avoid guest Wi‑Fi / AP isolation. Open the dashboard as a local file, not over HTTPS.
 
 Based on the open-source LensCast project, rebranded and English-only as **myCCTV**.

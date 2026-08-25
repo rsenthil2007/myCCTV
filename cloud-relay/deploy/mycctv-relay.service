@@ -1,0 +1,17 @@
+[Unit]
+Description=myCCTV cloud relay
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/mycctv-relay
+Environment=MYCCTV_HTTP_PORT=8090
+Environment=MYCCTV_RELAY_TOKEN=CHANGE_ME_TO_A_LONG_SECRET
+Environment=CORS_ORIGINS=*
+ExecStart=/usr/bin/python3 /opt/mycctv-relay/server.py
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

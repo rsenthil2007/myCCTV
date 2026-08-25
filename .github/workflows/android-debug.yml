@@ -29,9 +29,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "17"
@@ -51,7 +51,7 @@ jobs:
           ./gradlew :app:assembleDebug --stacktrace --no-daemon
 
       - name: Upload debug APK
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: myCCTV-debug-apk
           path: |
@@ -61,7 +61,7 @@ jobs:
 
       - name: Upload root latest APK if present
         if: success()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: myCCTV-debug-latest
           path: myCCTV-debug-latest.apk

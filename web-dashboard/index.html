@@ -6,384 +6,285 @@
 <title>myCCTV Remote Dashboard</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#121212;--surface:#1e1e1e;--surface2:#2a2a2a;--accent:#00e676;--accent-dim:#00c853;--text:#e0e0e0;--text2:#9e9e9e;--border:#333;--danger:#ff5252;--radius:8px}
-body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-a{color:var(--accent)}
+:root{--bg:#121212;--surface:#1e1e1e;--surface2:#2a2a2a;--accent:#00e676;--text:#e0e0e0;--text2:#9e9e9e;--border:#333;--danger:#ff5252;--radius:8px}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 .topbar{background:var(--surface);padding:12px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:5}
 .topbar h1{font-size:1.1rem;font-weight:600;color:var(--accent);white-space:nowrap}
+.mode{display:flex;gap:6px}
+.mode .btn.active{background:var(--accent);color:#000}
 .add-row{display:flex;gap:8px;flex:1;min-width:280px;flex-wrap:wrap}
-.add-row input{flex:1;min-width:140px;padding:7px 12px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;outline:none}
-.add-row input:focus{border-color:var(--accent)}
-.btn{padding:7px 14px;border:none;border-radius:var(--radius);cursor:pointer;font-size:.82rem;font-weight:600}
-.btn-accent{background:var(--accent);color:#000}
-.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}
-.btn-danger{background:var(--danger);color:#fff}
-.btn:disabled{opacity:.4;cursor:default}
+.add-row input,select{flex:1;min-width:120px;padding:7px 12px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.btn{padding:7px 14px;border:none;border-radius:var(--radius);cursor:pointer;font-size:.82rem;font-weight:600;background:var(--surface2);color:var(--text);border:1px solid var(--border)}
+.btn-accent{background:var(--accent);color:#000;border-color:var(--accent)}
+.btn-danger{background:var(--danger);color:#fff;border-color:var(--danger)}
 .hint{padding:8px 20px;font-size:.8rem;color:var(--text2);background:#181818;border-bottom:1px solid var(--border)}
 .error{display:none;padding:10px 20px;background:#3a1515;color:#ffcdd2;font-size:.85rem}
 .error.show{display:block}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px;padding:16px}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;min-height:420px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;min-height:380px}
 .card-head{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--border)}
 .card-head h2{font-size:.95rem;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.dot{width:9px;height:9px;border-radius:50%;background:#666;flex-shrink:0}
+.dot{width:9px;height:9px;border-radius:50%;background:#666}
 .dot.on{background:var(--accent);box-shadow:0 0 6px var(--accent)}
 .live-wrap{position:relative;background:#000;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center}
 .live-wrap img{max-width:100%;max-height:100%;object-fit:contain}
 .placeholder{color:var(--text2);font-size:.9rem;padding:16px;text-align:center}
 .actions{display:flex;flex-wrap:wrap;gap:6px;padding:10px 12px;border-top:1px solid var(--border)}
 .actions .btn{flex:1;min-width:90px}
-.controls{padding:10px 12px 14px;display:none;border-top:1px solid var(--border);flex-direction:column;gap:10px}
-.controls.open{display:flex}
-.ctrl label{font-size:.7rem;text-transform:uppercase;letter-spacing:.4px;color:var(--text2);font-weight:600;display:block;margin-bottom:4px}
-.ctrl select,.ctrl input[type=range]{width:100%;accent-color:var(--accent)}
-.ctrl select{padding:6px 8px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface2);color:var(--text)}
-.range-row{display:flex;align-items:center;gap:8px}
-.range-row .val{font-size:.8rem;color:var(--text2);min-width:32px;text-align:right}
-.toggle-row{display:flex;align-items:center;justify-content:space-between;font-size:.9rem}
 .meta{font-size:.75rem;color:var(--text2);padding:0 12px 10px}
 .empty{padding:48px 20px;text-align:center;color:var(--text2)}
+.relay-box{width:100%;display:flex;gap:8px;flex-wrap:wrap}
 </style>
 </head>
 <body>
 <div class="topbar">
   <h1>myCCTV Remote Dashboard</h1>
-  <div class="add-row">
+  <div class="mode">
+    <button class="btn active" id="modeLan" onclick="setMode('lan')">LAN</button>
+    <button class="btn" id="modeCloud" onclick="setMode('cloud')">Cloud relay</button>
+  </div>
+  <div class="add-row" id="lanAdd">
     <input id="nameInput" type="text" placeholder="Name (Kitchen)">
-    <input id="ipInput" type="text" placeholder="192.168.1.42 or http://192.168.1.42:41737">
-    <button class="btn btn-accent" onclick="addCamera()">Add camera</button>
+    <input id="ipInput" type="text" placeholder="192.168.1.42:41737">
+    <button class="btn btn-accent" onclick="addLanCamera()">Add camera</button>
+  </div>
+  <div class="add-row" id="cloudAdd" style="display:none">
+    <div class="relay-box">
+      <input id="relayUrl" type="text" placeholder="https://cctv.yourdomain.com">
+      <input id="relayToken" type="password" placeholder="Relay token">
+      <input id="deviceIdInput" type="text" placeholder="Phone device id (cam-...)">
+      <input id="cloudNameInput" type="text" placeholder="Name (optional)">
+      <button class="btn btn-accent" onclick="addCloudCamera()">Add via relay</button>
+    </div>
   </div>
 </div>
-<div class="hint">Add each phone by LAN IP. Streams run in parallel. After Stop, press Start — live video reconnects automatically. Screen Off uses the app blackout overlay (streaming continues).</div>
+<div class="hint" id="hint">LAN mode: phone and PC on same Wi-Fi. For HostingRaja HTTPS use Cloud relay (Interserver).</div>
 <div class="error" id="errorBox"></div>
 <div class="grid" id="grid"></div>
-<div class="empty" id="empty">No cameras yet. Copy the LAN IP from a myCCTV phone and add it above.</div>
-
+<div class="empty" id="empty">No cameras yet.</div>
 <script>
 const DEFAULT_PORT = 41737;
-const STORE_KEY = 'mycctvCameras';
+const STORE_KEY = 'mycctvCamerasV2';
+const CFG_KEY = 'mycctvDashCfg';
+let mode = 'lan';
 const cameras = loadCameras();
+const cfg = loadCfg();
 
-function showError(message) {
-  const box = document.getElementById('errorBox');
-  box.textContent = message || '';
-  box.classList.toggle('show', !!message);
+document.getElementById('relayUrl').value = cfg.relayUrl || '';
+document.getElementById('relayToken').value = cfg.relayToken || '';
+if (cfg.mode === 'cloud') setMode('cloud');
+
+function loadCfg(){ try{return JSON.parse(localStorage.getItem(CFG_KEY)||'{}')}catch(e){return{}} }
+function saveCfg(){
+  cfg.mode = mode;
+  cfg.relayUrl = document.getElementById('relayUrl').value.trim();
+  cfg.relayToken = document.getElementById('relayToken').value.trim();
+  localStorage.setItem(CFG_KEY, JSON.stringify(cfg));
 }
-
-function timeoutSignal(ms) {
-  if (window.AbortSignal && typeof AbortSignal.timeout === 'function') return AbortSignal.timeout(ms);
-  const controller = new AbortController();
-  setTimeout(() => controller.abort(), ms);
-  return controller.signal;
+function loadCameras(){ try{return JSON.parse(localStorage.getItem(STORE_KEY)||'[]')}catch(e){return[]} }
+function saveCameras(){
+  localStorage.setItem(STORE_KEY, JSON.stringify(cameras.map(c=>({id:c.id,name:c.name,kind:c.kind,address:c.address,deviceId:c.deviceId}))));
 }
-
-function normalizeBase(value) {
-  let v = (value || '').trim();
-  if (!v || v.includes('192.168.1.x')) throw new Error('Enter a real LAN IP, for example 192.168.1.42');
-  if (!/^https?:\/\//i.test(v)) v = 'http://' + v;
-  const url = new URL(v);
-  if (!url.port) url.port = String(DEFAULT_PORT);
-  return url.origin;
+function showError(msg){const b=document.getElementById('errorBox');b.textContent=msg||'';b.classList.toggle('show',!!msg)}
+function timeoutSignal(ms){if(AbortSignal.timeout)return AbortSignal.timeout(ms);const c=new AbortController();setTimeout(()=>c.abort(),ms);return c.signal}
+function escapeHtml(v){return String(v).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]))}
+function normalizeLan(value){
+  let v=(value||'').trim();
+  if(!v||v.includes('192.168.1.x')) throw new Error('Enter a real LAN IP');
+  if(!/^https?:\/\//i.test(v)) v='http://'+v;
+  const u=new URL(v); if(!u.port) u.port=String(DEFAULT_PORT); return u.origin;
 }
-
-function loadCameras() {
-  try { return JSON.parse(localStorage.getItem(STORE_KEY) || '[]'); } catch (e) { return []; }
+function normalizeRelay(value){
+  let v=(value||'').trim();
+  if(!v) throw new Error('Enter relay URL');
+  if(!/^https?:\/\//i.test(v)) v='https://'+v;
+  return v.replace(/\/$/,'');
 }
-
-function saveCameras() {
-  const list = cameras.map(({id, name, address}) => ({id, name, address}));
-  localStorage.setItem(STORE_KEY, JSON.stringify(list));
+function setMode(next){
+  mode=next;
+  document.getElementById('modeLan').classList.toggle('active', mode==='lan');
+  document.getElementById('modeCloud').classList.toggle('active', mode==='cloud');
+  document.getElementById('lanAdd').style.display = mode==='lan'?'flex':'none';
+  document.getElementById('cloudAdd').style.display = mode==='cloud'?'flex':'none';
+  document.getElementById('hint').textContent = mode==='lan'
+    ? 'LAN mode: open as local file or HTTP. HTTPS HostingRaja pages cannot talk to phone HTTP.'
+    : 'Cloud relay: HostingRaja HTTPS dashboard ↔ Interserver HTTPS ↔ phone (outbound). Copy device id from the app Network card.';
+  saveCfg();
 }
-
-function addCamera() {
+function addLanCamera(){
   showError('');
-  try {
-    const address = normalizeBase(document.getElementById('ipInput').value);
-    if (cameras.some(c => c.address === address)) throw new Error('That camera is already added');
-    const name = document.getElementById('nameInput').value.trim() || address.replace(/^https?:\/\//, '');
-    cameras.push({id: 'cam-' + Date.now(), name, address, connected: false, streaming: false, streamKey: 'off', pollTimer: null});
-    saveCameras();
-    document.getElementById('ipInput').value = '';
-    document.getElementById('nameInput').value = '';
+  try{
+    const address=normalizeLan(document.getElementById('ipInput').value);
+    if(cameras.some(c=>c.kind==='lan'&&c.address===address)) throw new Error('Already added');
+    const name=document.getElementById('nameInput').value.trim()||address.replace(/^https?:\/\//,'');
+    cameras.push({id:'lan-'+Date.now(),kind:'lan',name,address,connected:false,streaming:false,streamKey:'off',pollTimer:null});
+    saveCameras(); render(); connectCamera(cameras[cameras.length-1]);
+  }catch(e){showError(e.message)}
+}
+function addCloudCamera(){
+  showError('');
+  try{
+    saveCfg();
+    const relay=normalizeRelay(document.getElementById('relayUrl').value);
+    const token=document.getElementById('relayToken').value.trim();
+    const deviceId=document.getElementById('deviceIdInput').value.trim();
+    if(!token) throw new Error('Relay token required');
+    if(!deviceId) throw new Error('Device id required (from phone app)');
+    if(cameras.some(c=>c.kind==='cloud'&&c.deviceId===deviceId&&c.address===relay)) throw new Error('Already added');
+    const name=document.getElementById('cloudNameInput').value.trim()||deviceId;
+    cameras.push({id:'cloud-'+Date.now(),kind:'cloud',name,address:relay,deviceId,token,connected:false,streaming:false,streamKey:'off',pollTimer:null});
+    saveCameras(); render(); connectCamera(cameras[cameras.length-1]);
+  }catch(e){showError(e.message)}
+}
+function removeCamera(id){
+  const cam=cameras.find(c=>c.id===id); if(cam) disconnectCamera(cam);
+  const i=cameras.findIndex(c=>c.id===id); if(i>=0) cameras.splice(i,1);
+  saveCameras(); render();
+}
+function el(id,suffix){return document.getElementById(id+'-'+suffix)}
+function authHeaders(cam){
+  if(cam.kind!=='cloud') return {};
+  const token=cam.token||cfg.relayToken||document.getElementById('relayToken').value.trim();
+  return {'X-Relay-Token':token};
+}
+function tokenQuery(cam){
+  if(cam.kind!=='cloud') return '';
+  const token=encodeURIComponent(cam.token||cfg.relayToken||document.getElementById('relayToken').value.trim());
+  return 'token='+token;
+}
+function mediaBase(cam){
+  if(cam.kind==='lan') return cam.address;
+  return cam.address+'/api/devices/'+encodeURIComponent(cam.deviceId);
+}
+async function connectCamera(cam){
+  showError('');
+  try{
+    if(location.protocol==='https:' && cam.kind==='lan'){
+      throw new Error('This page is HTTPS. Use Cloud relay mode for HostingRaja, or open the dashboard as a local file for LAN.');
+    }
+    if(cam.kind==='cloud'){
+      const token=cam.token||cfg.relayToken||document.getElementById('relayToken').value.trim();
+      const r=await fetch(cam.address+'/api/devices/'+encodeURIComponent(cam.deviceId)+'/state?'+tokenQuery(cam),{cache:'no-store',headers:authHeaders(cam),signal:timeoutSignal(8000)});
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      const s=await r.json();
+      cam.connected=true; cam.streaming=!!s.streaming; cam.name=s.name||cam.name;
+    } else {
+      const r=await fetch(cam.address+'/api/state',{cache:'no-store',signal:timeoutSignal(6000)});
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      await r.json();
+      cam.connected=true;
+    }
+    saveCameras(); startPoll(cam); render();
+  }catch(e){
+    cam.connected=false;
+    showError(cam.name+': '+(e.message||'Failed to fetch'));
     render();
-    connectCamera(cameras[cameras.length - 1]);
-  } catch (e) {
-    showError(e.message);
   }
 }
-
-function removeCamera(id) {
-  const cam = cameras.find(c => c.id === id);
-  if (cam) disconnectCamera(cam);
-  const index = cameras.findIndex(c => c.id === id);
-  if (index >= 0) cameras.splice(index, 1);
-  saveCameras();
-  render();
+function disconnectCamera(cam){
+  cam.connected=false; cam.streaming=false; cam.streamKey='off';
+  clearInterval(cam.pollTimer); cam.pollTimer=null;
+  const img=el(cam.id,'img'); if(img){img.removeAttribute('src'); img.style.display='none'}
 }
-
-function el(id, suffix) {
-  return document.getElementById(id + '-' + suffix);
+function startPoll(cam){ clearInterval(cam.pollTimer); cam.pollTimer=setInterval(()=>pollCamera(cam),2000) }
+async function pollCamera(cam){
+  if(!cam.connected) return;
+  try{
+    if(cam.kind==='cloud'){
+      const r=await fetch(mediaBase(cam)+'/state?'+tokenQuery(cam),{cache:'no-store',headers:authHeaders(cam),signal:timeoutSignal(5000)});
+      const s=await r.json();
+      const was=cam.streaming; cam.streaming=!!s.streaming;
+      applyMeta(cam, (cam.streaming?'Streaming':'Waiting for frames')+' · cloud');
+      attachStream(cam, cam.streaming && !was);
+      const dot=el(cam.id,'dot'); if(dot) dot.classList.add('on');
+    } else {
+      const r=await fetch(cam.address+'/api/state',{cache:'no-store',signal:timeoutSignal(4000)});
+      const s=await r.json();
+      const was=cam.streaming; cam.streaming=!!s.streaming;
+      applyMeta(cam, (cam.streaming?'Streaming':'Stopped')+' · LAN');
+      attachStream(cam, cam.streaming && !was);
+      const dot=el(cam.id,'dot'); if(dot) dot.classList.add('on');
+    }
+  }catch(e){
+    const dot=el(cam.id,'dot'); if(dot) dot.classList.remove('on');
+    applyMeta(cam, 'connection lost');
+  }
 }
-
-function render() {
-  const grid = document.getElementById('grid');
-  document.getElementById('empty').style.display = cameras.length ? 'none' : 'block';
-  grid.innerHTML = cameras.map(cam => `
+function applyMeta(cam, text){ const m=el(cam.id,'meta'); if(m) m.textContent=(cam.kind==='cloud'?cam.deviceId:cam.address)+' · '+text }
+function attachStream(cam, force){
+  const img=el(cam.id,'img'); const ph=el(cam.id,'ph'); if(!img) return;
+  const shouldLive = cam.kind==='cloud' ? cam.connected : cam.streaming;
+  if(shouldLive){
+    if(force || cam.streamKey!=='live'){
+      cam.streamKey='live';
+      img.onload=()=>{if(ph) ph.style.display='none'; img.style.display=''};
+      img.onerror=()=>{ if(!cam.connected) return; setTimeout(()=>{ if(cam.connected){ cam.streamKey='retry'; attachStream(cam,true);} },1000); };
+      const q = cam.kind==='cloud' ? ('?'+tokenQuery(cam)+'&t='+Date.now()) : ('?t='+Date.now());
+      img.src = (cam.kind==='cloud' ? mediaBase(cam)+'/mjpeg' : cam.address+'/video') + q;
+      img.style.display='';
+      if(ph){ph.style.display=''; ph.textContent='Connecting live view…'}
+    }
+  } else {
+    cam.streamKey='off'; img.removeAttribute('src'); img.src=''; img.style.display='none';
+    if(ph){ph.style.display=''; ph.textContent=cam.connected?'Stopped / waiting':'Not connected'}
+  }
+}
+async function cmd(id, param, value){
+  const cam=cameras.find(c=>c.id===id); if(!cam||!cam.connected) return showError('Connect first');
+  try{
+    if(cam.kind==='cloud'){
+      const body=JSON.stringify({[param]:String(value)});
+      await fetch(mediaBase(cam)+'/control?'+tokenQuery(cam),{method:'POST',headers:{...authHeaders(cam),'Content-Type':'application/json'},body,signal:timeoutSignal(8000)});
+    } else {
+      await fetch(cam.address+'/api/control?'+param+'='+encodeURIComponent(value),{cache:'no-store',signal:timeoutSignal(8000)});
+    }
+    setTimeout(()=>pollCamera(cam),700);
+  }catch(e){showError(cam.name+' control failed: '+(e.message||'error'))}
+}
+async function takePhoto(id){
+  const cam=cameras.find(c=>c.id===id); if(!cam||!cam.connected) return showError('Connect first');
+  try{
+    const url = cam.kind==='cloud'
+      ? mediaBase(cam)+'/frame.jpg?'+tokenQuery(cam)+'&t='+Date.now()
+      : cam.address+'/snapshot.jpg?t='+Date.now();
+    const r=await fetch(url,{cache:'no-store',headers:authHeaders(cam),signal:timeoutSignal(8000)});
+    if(!r.ok) throw new Error(r.status===503?'No frame yet — start live on phone':'HTTP '+r.status);
+    const blob=await r.blob();
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download=(cam.name||'mycctv')+'_'+Date.now()+'.jpg';
+    a.click();
+  }catch(e){showError(cam.name+' photo failed: '+(e.message||'error'))}
+}
+function render(){
+  const grid=document.getElementById('grid');
+  document.getElementById('empty').style.display=cameras.length?'none':'block';
+  grid.innerHTML=cameras.map(cam=>`
     <article class="card" id="${cam.id}">
       <div class="card-head">
-        <div class="dot ${cam.connected ? 'on' : ''}" id="${cam.id}-dot"></div>
-        <h2 title="${cam.address}">${escapeHtml(cam.name)}</h2>
-        <button class="btn btn-outline" onclick="toggleConnect('${cam.id}')">${cam.connected ? 'Disconnect' : 'Connect'}</button>
-        <button class="btn btn-outline" onclick="removeCamera('${cam.id}')">Remove</button>
+        <div class="dot ${cam.connected?'on':''}" id="${cam.id}-dot"></div>
+        <h2 title="${escapeHtml(cam.address)}">${escapeHtml(cam.name)} <span style="color:#888;font-weight:400">(${cam.kind})</span></h2>
+        <button class="btn" onclick="toggleConnect('${cam.id}')">${cam.connected?'Disconnect':'Connect'}</button>
+        <button class="btn" onclick="removeCamera('${cam.id}')">Remove</button>
       </div>
       <div class="live-wrap">
         <div class="placeholder" id="${cam.id}-ph">Not connected</div>
         <img id="${cam.id}-img" alt="Live" style="display:none">
       </div>
-      <div class="meta" id="${cam.id}-meta">${cam.address}</div>
+      <div class="meta" id="${cam.id}-meta">${escapeHtml(cam.kind==='cloud'?cam.deviceId:cam.address)}</div>
       <div class="actions">
         <button class="btn btn-accent" onclick="cmd('${cam.id}','streaming','true')">Start</button>
         <button class="btn btn-danger" onclick="cmd('${cam.id}','stopStreaming','true')">Stop</button>
-        <button class="btn btn-outline" onclick="takePhoto('${cam.id}')">Photo</button>
-        <button class="btn btn-outline" onclick="cmd('${cam.id}','screenOff','true')">Screen off</button>
-        <button class="btn btn-outline" onclick="cmd('${cam.id}','screenOff','false')">Screen on</button>
-        <button class="btn btn-outline" onclick="toggleControls('${cam.id}')">Controls</button>
+        <button class="btn" onclick="takePhoto('${cam.id}')">Photo</button>
+        <button class="btn" onclick="cmd('${cam.id}','screenOff','true')">Screen off</button>
+        <button class="btn" onclick="cmd('${cam.id}','screenOff','false')">Screen on</button>
       </div>
-      <div class="controls" id="${cam.id}-controls">
-        <div class="ctrl"><label>Camera</label><select id="${cam.id}-camera" onchange="cmd('${cam.id}','camera',this.value)"></select></div>
-        <div class="ctrl"><label>Resolution</label><select id="${cam.id}-res" onchange="cmd('${cam.id}','resolution',this.value)"></select></div>
-        <div class="ctrl"><label>FPS</label><select id="${cam.id}-fps" onchange="cmd('${cam.id}','fps',this.value)"></select></div>
-        <div class="ctrl"><label>Quality</label><div class="range-row"><input type="range" id="${cam.id}-quality" min="0" max="100" onchange="cmd('${cam.id}','quality',this.value)"><span class="val" id="${cam.id}-qualityVal">50</span></div></div>
-        <div class="ctrl"><label>Zoom</label><div class="range-row"><input type="range" id="${cam.id}-zoom" min="1" max="10" step="0.1" onchange="cmd('${cam.id}','zoom',this.value)"><span class="val" id="${cam.id}-zoomVal">1.0</span></div></div>
-        <div class="toggle-row"><span>Torch</span><input type="checkbox" id="${cam.id}-torch" onchange="cmd('${cam.id}','torch',this.checked)"></div>
-        <div class="toggle-row"><span>Overlay</span><input type="checkbox" id="${cam.id}-overlay" onchange="cmd('${cam.id}','videoOverlay',this.checked)"></div>
-        <div class="toggle-row"><span>Audio</span><input type="checkbox" id="${cam.id}-audio" onchange="cmd('${cam.id}','audio',this.checked)"></div>
-      </div>
-    </article>
-  `).join('');
-  cameras.forEach(cam => {
-    if (cam.connected) {
-      pollCamera(cam);
-      if (cam.streaming) attachStream(cam, true);
-    }
-  });
+    </article>`).join('');
+  cameras.forEach(cam=>{ if(cam.connected){ pollCamera(cam); attachStream(cam,true);} });
 }
-
-function escapeHtml(value) {
-  return String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
-}
-
-function toggleControls(id) {
-  const box = el(id, 'controls');
-  box.classList.toggle('open');
-}
-
-async function toggleConnect(id) {
-  const cam = cameras.find(c => c.id === id);
-  if (!cam) return;
-  if (cam.connected) disconnectCamera(cam);
-  else await connectCamera(cam);
-}
-
-async function connectCamera(cam) {
-  showError('');
-  try {
-    if (location.protocol === 'https:') {
-      throw new Error('Open this dashboard as a local file. HTTPS pages cannot reach HTTP phones.');
-    }
-    const state = await fetchState(cam);
-    cam.connected = true;
-    cam.name = state.deviceName || cam.name;
-    saveCameras();
-    applyState(cam, state);
-    startPoll(cam);
-    render();
-  } catch (e) {
-    cam.connected = false;
-    showError(cam.name + ': ' + ((e && e.message) || 'Failed to fetch'));
-    render();
-  }
-}
-
-function disconnectCamera(cam) {
-  cam.connected = false;
-  cam.streaming = false;
-  cam.streamKey = 'off';
-  clearInterval(cam.pollTimer);
-  cam.pollTimer = null;
-  const img = el(cam.id, 'img');
-  if (img) {
-    img.removeAttribute('src');
-    img.style.display = 'none';
-  }
-}
-
-function startPoll(cam) {
-  clearInterval(cam.pollTimer);
-  cam.pollTimer = setInterval(() => pollCamera(cam), 2000);
-}
-
-async function fetchState(cam) {
-  const response = await fetch(cam.address + '/api/state', {cache: 'no-store', signal: timeoutSignal(6000)});
-  if (!response.ok) throw new Error('HTTP ' + response.status);
-  return response.json();
-}
-
-async function pollCamera(cam) {
-  if (!cam.connected) return;
-  try {
-    const state = await fetchState(cam);
-    applyState(cam, state);
-    const dot = el(cam.id, 'dot');
-    if (dot) dot.classList.add('on');
-  } catch (e) {
-    const dot = el(cam.id, 'dot');
-    if (dot) dot.classList.remove('on');
-    const meta = el(cam.id, 'meta');
-    if (meta) meta.textContent = cam.address + ' · connection lost';
-  }
-}
-
-function optionList(raw) {
-  if (!raw) return [];
-  if (Array.isArray(raw)) {
-    return raw.map(item => item && typeof item === 'object'
-      ? {value: item.value, label: item.label || item.value}
-      : {value: item, label: item});
-  }
-  return Object.keys(raw).map(key => ({value: key, label: raw[key]}));
-}
-
-function fillSelect(select, options, selected) {
-  if (!select) return;
-  const signature = options.map(o => o.value).join('|');
-  if (select.dataset.sig !== signature) {
-    select.innerHTML = options.map(o => `<option value="${escapeHtml(String(o.value))}">${escapeHtml(String(o.label))}</option>`).join('');
-    select.dataset.sig = signature;
-  }
-  if (selected != null && selected !== '') select.value = selected;
-}
-
-function applyState(cam, state) {
-  const wasStreaming = cam.streaming;
-  cam.streaming = !!state.streaming;
-  if (state.deviceName && state.deviceName !== cam.name) {
-    cam.name = state.deviceName;
-    saveCameras();
-    const title = document.querySelector('#' + cam.id + ' h2');
-    if (title) title.textContent = cam.name;
-  }
-  fillSelect(el(cam.id, 'camera'), optionList(state.cameraOptions), state.selectedCameraKey);
-  fillSelect(el(cam.id, 'res'), optionList(state.resolutionOptions), state.selectedResolution);
-  fillSelect(el(cam.id, 'fps'), optionList(state.fpsOptions), state.selectedFps);
-  const quality = el(cam.id, 'quality');
-  if (quality) {
-    quality.min = state.qualityMin ?? 0;
-    quality.max = state.qualityMax ?? 100;
-    quality.value = state.qualityValue ?? 50;
-    const qv = el(cam.id, 'qualityVal');
-    if (qv) qv.textContent = quality.value;
-  }
-  const zoom = el(cam.id, 'zoom');
-  if (zoom) {
-    zoom.min = state.zoomMin ?? 1;
-    zoom.max = state.zoomMax ?? 10;
-    zoom.value = state.zoomValue ?? 1;
-    const zv = el(cam.id, 'zoomVal');
-    if (zv) zv.textContent = parseFloat(zoom.value).toFixed(1);
-  }
-  const torch = el(cam.id, 'torch'); if (torch) torch.checked = !!state.torchEnabled;
-  const overlay = el(cam.id, 'overlay'); if (overlay) overlay.checked = !!state.videoOverlayEnabled;
-  const audio = el(cam.id, 'audio'); if (audio) audio.checked = !!state.audioEnabled;
-  const meta = el(cam.id, 'meta');
-  if (meta) {
-    meta.textContent = [
-      cam.address,
-      cam.streaming ? 'Streaming' : 'Stopped',
-      state.screenOff ? 'Screen off' : 'Screen on',
-      state.rtspUrl || ''
-    ].filter(Boolean).join(' · ');
-  }
-  attachStream(cam, cam.streaming && !wasStreaming);
-}
-
-function attachStream(cam, force) {
-  const img = el(cam.id, 'img');
-  const ph = el(cam.id, 'ph');
-  if (!img) return;
-  if (cam.streaming) {
-    if (force || cam.streamKey !== 'live') {
-      cam.streamKey = 'live';
-      img.onload = () => { if (ph) ph.style.display = 'none'; img.style.display = ''; };
-      img.onerror = () => {
-        if (!cam.connected || !cam.streaming) return;
-        setTimeout(() => {
-          if (cam.streaming) {
-            cam.streamKey = 'retry';
-            attachStream(cam, true);
-          }
-        }, 800);
-      };
-      img.src = cam.address + '/video?t=' + Date.now();
-      img.style.display = '';
-      if (ph) {
-        ph.style.display = '';
-        ph.textContent = 'Connecting live view…';
-      }
-    }
-  } else {
-    cam.streamKey = 'off';
-    img.removeAttribute('src');
-    img.src = '';
-    img.style.display = 'none';
-    if (ph) {
-      ph.style.display = '';
-      ph.textContent = cam.connected ? 'Stopped — press Start to view' : 'Not connected';
-    }
-  }
-}
-
-async function cmd(id, param, value) {
-  const cam = cameras.find(c => c.id === id);
-  if (!cam || !cam.connected) return showError('Connect this camera first');
-  try {
-    await fetch(cam.address + '/api/control?' + param + '=' + encodeURIComponent(value), {
-      cache: 'no-store',
-      signal: timeoutSignal(8000)
-    });
-    if (param === 'streaming' && String(value) === 'true') {
-      setTimeout(() => pollCamera(cam), 700);
-    } else {
-      pollCamera(cam);
-    }
-  } catch (e) {
-    showError(cam.name + ' control failed: ' + ((e && e.message) || 'Failed to fetch'));
-  }
-}
-
-async function takePhoto(id) {
-  const cam = cameras.find(c => c.id === id);
-  if (!cam || !cam.connected) return showError('Connect this camera first');
-  try {
-    const response = await fetch(cam.address + '/snapshot.jpg?t=' + Date.now(), {cache: 'no-store', signal: timeoutSignal(8000)});
-    if (!response.ok) throw new Error(response.status === 503 ? 'No frame yet — start streaming first' : 'HTTP ' + response.status);
-    const blob = await response.blob();
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    const stamp = new Date().toISOString().replace(/[:.]/g, '-');
-    link.href = url;
-    link.download = (cam.name || 'mycctv') + '_' + stamp + '.jpg';
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 2000);
-  } catch (e) {
-    showError(cam.name + ' photo failed: ' + ((e && e.message) || 'Failed to fetch'));
-  }
-}
-
+function toggleConnect(id){ const cam=cameras.find(c=>c.id===id); if(!cam)return; if(cam.connected){disconnectCamera(cam);render()} else connectCamera(cam) }
 render();
-cameras.forEach(cam => connectCamera(cam).catch(() => {}));
+cameras.forEach(c=>connectCamera(c).catch(()=>{}));
 </script>
 </body>
 </html>
