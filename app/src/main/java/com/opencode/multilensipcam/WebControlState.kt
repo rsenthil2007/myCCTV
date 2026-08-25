@@ -56,5 +56,9 @@ data class WebControlState(
     val audioStreaming: Boolean,
     val audioClients: Int,
     val audioUrl: String,
-    val audioStatus: String
+    val audioStatus: String,
+    val deviceName: String,
+    val lanIp: String?,
+    val httpPort: Int,
+    val screenOff: Boolean
 )

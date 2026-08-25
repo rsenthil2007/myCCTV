@@ -51,9 +51,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:ellipsize="end"
-                android:maxLines="1"
-                android:text="@string/ui_current_setup_en"
+                android:maxLines="2"
+                android:text="@string/ui_wifi_status_disconnected"
                 android:textColor="@color/ui_text_secondary"
+                android:textIsSelectable="true"
                 android:textSize="12sp" />
 
             <TextView
@@ -173,6 +174,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/ui_dashboard_not_started_en"
                 android:textColor="@color/ui_text_primary"
+                android:textIsSelectable="true"
                 android:textSize="12sp" />
         </LinearLayout>
 
@@ -1294,7 +1296,7 @@
                     android:background="@drawable/bg_card_surface"
                     android:orientation="vertical"
                     android:padding="12dp"
-                    android:visibility="gone">
+                    android:visibility="visible">
 
                     <TextView
                         android:layout_width="match_parent"
@@ -1311,6 +1313,7 @@
                         android:layout_marginTop="6dp"
                         android:text="@string/ui_stream_urls_hint_en"
                         android:textColor="@color/ui_text_secondary"
+                        android:textIsSelectable="true"
                         android:textSize="11sp" />
                 </LinearLayout>
             </LinearLayout>

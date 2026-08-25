@@ -205,6 +205,10 @@ object WebApiJson {
             put("audioClients", state.audioClients)
             put("audioUrl", state.audioUrl)
             put("audioStatus", state.audioStatus)
+            put("deviceName", state.deviceName)
+            put("lanIp", state.lanIp)
+            put("httpPort", state.httpPort)
+            put("screenOff", state.screenOff)
         }
     }
 

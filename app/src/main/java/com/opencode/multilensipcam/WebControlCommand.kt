@@ -25,5 +25,6 @@ data class WebControlCommand(
     val mjpegFullSize: Boolean? = null,
     val audioEnabled: Boolean? = null,
     val stopStreaming: Boolean = false,
-    val streaming: Boolean? = null
+    val streaming: Boolean? = null,
+    val screenOff: Boolean? = null
 )

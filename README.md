@@ -32,8 +32,12 @@ Output: `app/build/outputs/apk/debug/app-debug.apk` and `myCCTV-debug-latest.apk
 ## Usage
 
 1. Install the APK and grant camera (+ microphone if needed).
-2. Connect phone and viewer to the same Wi‑Fi.
-3. Start streaming in the app; note the IP and port shown.
-4. Open `http://<phone-ip>:<port>/` in a browser, or use RTSP/MJPEG URLs from the app.
+2. Connect the phone to Wi‑Fi. The app shows Wi‑Fi status and LAN IP in the header and Network card.
+3. Keep myCCTV open — the HTTP control server starts with the app on port `41737`.
+4. On another device on the same Wi‑Fi, open `web-dashboard/index.html`, paste the LAN IP, and Connect.
+   Or open `http://<phone-ip>:41737/` in a browser for the built-in dashboard.
+5. Press Start live for video. RTSP is available when streaming.
+
+If the remote dashboard says **Failed to fetch**, copy the exact LAN IP from the app, keep myCCTV open, and avoid guest Wi‑Fi / AP isolation. Open the dashboard as a local file, not over HTTPS.
 
 Based on the open-source LensCast project, rebranded and English-only as **myCCTV**.

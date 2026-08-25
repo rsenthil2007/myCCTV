@@ -1,28 +1,31 @@
 # myCCTV Remote Dashboard
 
-A single-file web dashboard to control the myCCTV Android app over local WiFi.
+A single-file web dashboard to control one or more myCCTV phones over local Wi-Fi.
 
 ## Usage
 
-1. Open the myCCTV app on your Android phone and start the HTTP server (port 41737).
-2. Make sure your phone and computer are on the same WiFi network.
-3. Open `index.html` in any modern browser (Chrome, Edge, Firefox).
-4. Enter your phone's local IP address in the connection bar, e.g. `http://192.168.1.42:41737`.
-5. Click **Connect** — the live MJPEG stream will appear and all controls will populate from the camera state.
+1. Install/open myCCTV on each phone and grant camera permission.
+2. Connect each phone to Wi-Fi. Copy the LAN IP from the app header / Network card.
+3. Keep myCCTV open.
+4. On a computer on the **same Wi-Fi**, open `index.html` as a local file (not from an `https://` site).
+5. Enter a name and IP, then **Add camera**. Repeat for more phones.
+6. Use **Start** / **Stop**, **Photo**, and **Screen off/on** on each card.
+
+Live video reconnects automatically after Stop then Start. You do not need to Disconnect.
+
+## If Connect says "Failed to fetch"
+
+- Use the IP shown in the app, not a guessed address.
+- Phone and computer must be on the same LAN. Guest Wi-Fi and AP/client isolation block phone-to-PC traffic.
+- Keep the myCCTV activity in the foreground.
+- Open this dashboard from a file (`file://.../index.html`).
 
 ## Features
 
-- Live MJPEG video stream with snapshot download
-- Camera, resolution, and FPS selection
-- Quality, zoom, and exposure sliders
-- Focus mode switching (Continuous / Auto / Manual)
-- Torch, video overlay, and audio toggles
-- Start/Stop streaming controls
-- Auto-refresh every 3 seconds to stay in sync
-- Dark theme, responsive layout (desktop and mobile)
+- Multiple phones in parallel
+- Live MJPEG per camera, with automatic reconnect after Start
+- Remote JPEG photo download
+- Screen off (blackout overlay) and screen on
+- Camera, resolution, FPS, quality, zoom, torch, overlay, audio
 
-## Requirements
-
-- No build step or dependencies — just a browser
-- Phone and computer must be on the same local network
-- CORS is handled by the myCCTV server (`Access-Control-Allow-Origin: *`)
+LAN only. Streams have no password.

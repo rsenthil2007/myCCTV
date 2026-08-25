@@ -47,8 +47,9 @@
     <string name="ui_exposure_compensation_zh">Exposure compensation</string>
     <string name="ui_network_en">Network</string>
     <string name="ui_network_zh">Network</string>
-    <string name="ui_stream_urls_hint_en">Stream URLs appear here</string>
-    <string name="ui_stream_urls_hint_zh">Stream URLs appear here</string>
+    <string name="ui_wifi_status_disconnected">Wi-Fi not connected</string>
+    <string name="ui_stream_urls_hint_en">Wi-Fi status and LAN IP appear here</string>
+    <string name="ui_stream_urls_hint_zh">Wi-Fi status and LAN IP appear here</string>
     <string name="ui_preset_1080p_30">1080p 30 fps 75%</string>
     <string name="ui_preset_4k_30">4K 30 fps 60%</string>
     <string name="ui_preset_720p_60">720p 30 fps 100%</string>

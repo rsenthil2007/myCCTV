@@ -27,7 +27,8 @@ object WebApiQueryParser {
             mjpegFullSize = parseBoolean(query["mjpegFullSize"]),
             audioEnabled = parseBoolean(query["audio"] ?: query["audioEnabled"]),
             stopStreaming = parseBoolean(query["stopStreaming"]) == true,
-            streaming = parseBoolean(query["streaming"])
+            streaming = parseBoolean(query["streaming"]),
+            screenOff = parseScreenOff(query)
         )
     }
 
@@ -48,6 +49,15 @@ object WebApiQueryParser {
         return when (value?.lowercase()) {
             "1", "true", "yes", "on" -> true
             "0", "false", "no", "off" -> false
+            else -> null
+        }
+    }
+
+    private fun parseScreenOff(query: Map<String, String>): Boolean? {
+        parseBoolean(query["screenOff"] ?: query["blackout"])?.let { return it }
+        return when (query["screen"]?.lowercase()) {
+            "off" -> true
+            "on" -> false
             else -> null
         }
     }

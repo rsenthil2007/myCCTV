@@ -1,9 +1,5 @@
 package com.opencode.multilensipcam
 
-import java.net.Inet4Address
-import java.net.NetworkInterface
-import java.util.Collections
-
 object AppDisplayInfo {
     fun versionLabel(): String {
         return "v${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"
@@ -24,9 +20,6 @@ object AppDisplayInfo {
     }
 
     fun localIpv4Address(): String? {
-        return Collections.list(NetworkInterface.getNetworkInterfaces())
-            .flatMap { Collections.list(it.inetAddresses) }
-            .firstOrNull { address -> !address.isLoopbackAddress && address is Inet4Address }
-            ?.hostAddress
+        return LanNetworkInfo.ipv4FromInterfaces()
     }
 }

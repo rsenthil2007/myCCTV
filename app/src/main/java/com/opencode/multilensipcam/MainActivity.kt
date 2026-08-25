@@ -13,6 +13,10 @@ import android.content.res.Configuration
 import android.graphics.Color
 import android.hardware.camera2.CameraManager
 import android.hardware.display.DisplayManager
+import android.net.ConnectivityManager
+import android.net.LinkProperties
+import android.net.Network
+import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Build
 import android.os.BatteryManager
@@ -133,6 +137,15 @@ class MainActivity : AppCompatActivity() {
         override fun onDisplayChanged(displayId: Int) {
             refreshLandscapeStreamingOrientation(force = false)
         }
+    }
+    private var networkCallbackRegistered = false
+    private val connectivityManager: ConnectivityManager
+        get() = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    private val networkCallback = object : ConnectivityManager.NetworkCallback() {
+        override fun onAvailable(network: Network) = refreshLanStatus()
+        override fun onLost(network: Network) = refreshLanStatus()
+        override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) = refreshLanStatus()
+        override fun onLinkPropertiesChanged(network: Network, linkProperties: LinkProperties) = refreshLanStatus()
     }
 
     // Activity lifecycle and startup wiring.
@@ -292,6 +305,7 @@ class MainActivity : AppCompatActivity() {
             setVideoOverlayEnabled = { selectedVideoOverlayEnabled = it },
             setVideoOverlaySize = { selectedVideoOverlaySize = it },
             applyAudioControl = ::applyAudioControl,
+            applyScreenControl = ::applyScreenControl,
             applyWebCameraSelection = ::applyWebCameraSelection,
             selectedOption = { selectedOption },
             resolveCapabilities = { option -> currentCapabilities ?: cameraRepository.getCapabilities(option) },
@@ -310,6 +324,8 @@ class MainActivity : AppCompatActivity() {
         applyLanguageText()
         applySkinState()
         updateStreamingUiState()
+        startLanServers()
+        registerLanNetworkCallback()
         updateUrl()
         updateBatteryStatus(registerReceiver(batteryStatusReceiver, IntentFilter(Intent.ACTION_BATTERY_CHANGED)))
         checkPermissionAndLoad()
@@ -344,6 +360,7 @@ class MainActivity : AppCompatActivity() {
         }
         h264IdleHandler.removeCallbacks(h264IdleStopRunnable)
         mjpegDemandSyncHandler.removeCallbacks(mjpegDemandSyncRunnable)
+        unregisterLanNetworkCallback()
         runCatching { unregisterReceiver(batteryStatusReceiver) }
         super.onDestroy()
     }
@@ -1116,14 +1133,17 @@ class MainActivity : AppCompatActivity() {
         refreshControls(resetCameraSpecificValues = true)
         renderCameraChipGroup()
         refreshNativeVerifiedCameraList()
-        if (hasLoadedCameraOptions) {
-            server.start()
-            val rtspStarted = rtspServer.start()
-            updateUrl()
-            updateStatus(if (rtspStarted) "Ready on port $port" else "Ready on port $port; RTSP port $rtspPort unavailable")
-        } else {
-            updateStatus("Loaded ${options.size} camera entries")
-        }
+        startLanServers()
+        val lan = currentLanSnapshot()
+        val ipLabel = lan.ipv4 ?: "no LAN IP"
+        updateUrl()
+        updateStatus(
+            if (hasLoadedCameraOptions) {
+                "${lan.wifiStatusLabel} · $ipLabel · port $port"
+            } else {
+                "Loaded ${options.size} camera entries"
+            }
+        )
     }
 
     private fun buildSelectableCameraOptions(): List<CameraLensOption> {
@@ -1508,7 +1528,11 @@ class MainActivity : AppCompatActivity() {
             audioRunning = ::audioStreamer.isInitialized && audioStreamer.isReady,
             audioClients = if (::server.isInitialized) server.audioClientCount() else 0,
             audioUrl = audioUrl(),
-            audioStatus = currentAudioStatus()
+            audioStatus = currentAudioStatus(),
+            deviceName = Build.MODEL,
+            lanIp = currentLanSnapshot().ipv4,
+            httpPort = port,
+            screenOff = blackoutOverlay != null
         )
     }
 
@@ -1651,13 +1675,52 @@ class MainActivity : AppCompatActivity() {
     }
 
     // Status text, localization, skinning, and layout modes.
+    private fun currentLanSnapshot(): LanNetworkSnapshot {
+        return LanNetworkInfo.snapshot(this, port)
+    }
+
+    private fun startLanServers() {
+        if (::server.isInitialized) {
+            runCatching { server.start() }
+        }
+        if (::rtspServer.isInitialized) {
+            runCatching { rtspServer.start() }
+        }
+    }
+
+    private fun registerLanNetworkCallback() {
+        if (networkCallbackRegistered) return
+        runCatching {
+            connectivityManager.registerDefaultNetworkCallback(networkCallback)
+            networkCallbackRegistered = true
+        }
+    }
+
+    private fun unregisterLanNetworkCallback() {
+        if (!networkCallbackRegistered) return
+        runCatching { connectivityManager.unregisterNetworkCallback(networkCallback) }
+        networkCallbackRegistered = false
+    }
+
+    private fun refreshLanStatus() {
+        runOnUiThread { updateUrl() }
+    }
+
     private fun updateUrl() {
+        val lan = currentLanSnapshot()
         val rtspLine = if (::rtspServer.isInitialized && rtspServer.isRunning) {
             "RTSP  ${rtspUrl()}"
         } else {
             "RTSP  unavailable on port $rtspPort"
         }
-        binding.urlText.text = "${AppDisplayInfo.dashboardSummary(port)}\n$rtspLine"
+        val summary = lan.displaySummary(rtspLine)
+        binding.urlText.text = summary
+        binding.networkSummaryText.text = summary
+        binding.heroSubtitleText.text = if (lan.ipv4 != null) {
+            "${lan.wifiStatusLabel}  ·  ${lan.ipv4}"
+        } else {
+            lan.wifiStatusLabel
+        }
     }
 
     private fun updateStatus(message: String) {
@@ -1818,7 +1881,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun enterBlackoutMode() {
-        if (!isLandscapeStreaming() || blackoutOverlay != null) return
+        if (blackoutOverlay != null) return
         val decor = window.decorView as? ViewGroup ?: return
         previousScreenBrightness = window.attributes.screenBrightness
         window.attributes = window.attributes.apply {
@@ -1841,18 +1904,44 @@ class MainActivity : AppCompatActivity() {
             overlay.bringToFront()
         }
         updateSystemBarsForMode()
+        updateStatus("Screen off")
     }
 
     private fun exitBlackoutMode() {
-        val overlay = blackoutOverlay ?: return
-        (overlay.parent as? ViewGroup)?.removeView(overlay)
-        blackoutOverlay = null
+        val overlay = blackoutOverlay
+        if (overlay != null) {
+            (overlay.parent as? ViewGroup)?.removeView(overlay)
+            blackoutOverlay = null
+        }
         val restoredBrightness = previousScreenBrightness ?: WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
         window.attributes = window.attributes.apply {
             screenBrightness = restoredBrightness
         }
         previousScreenBrightness = null
+        wakeScreen()
         updateControlSurfaceMode()
+        updateStatus("Screen on")
+    }
+
+    private fun applyScreenControl(screenOff: Boolean) {
+        if (screenOff) enterBlackoutMode() else exitBlackoutMode()
+    }
+
+    @Suppress("DEPRECATION")
+    private fun wakeScreen() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            setTurnScreenOn(true)
+            setShowWhenLocked(true)
+        }
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        val powerManager = getSystemService(Context.POWER_SERVICE) as android.os.PowerManager
+        val wakeLock = powerManager.newWakeLock(
+            android.os.PowerManager.SCREEN_BRIGHT_WAKE_LOCK or android.os.PowerManager.ACQUIRE_CAUSES_WAKEUP,
+            "mycctv:screen"
+        )
+        runCatching {
+            wakeLock.acquire(3_000)
+        }
     }
 
     private fun isLandscapeStreaming(): Boolean {
@@ -1933,7 +2022,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun liveStatusLine1Text(): String {
-        return localizedText("Live  ${appVersionLabel()}", "\u6b63\u5728\u76f4\u64ad  ${appVersionLabel()}")
+        val lan = currentLanSnapshot()
+        val ip = lan.ipv4 ?: "no LAN IP"
+        return "Live  ${appVersionLabel()}  ·  $ip"
     }
 
     private fun liveStatusLine2Text(): String {

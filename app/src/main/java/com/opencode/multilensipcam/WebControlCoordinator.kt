@@ -17,6 +17,7 @@ class WebControlCoordinator(
     private val setVideoOverlayEnabled: (Boolean) -> Unit,
     private val setVideoOverlaySize: (Int) -> Unit,
     private val applyAudioControl: (Boolean) -> Unit,
+    private val applyScreenControl: (Boolean) -> Unit,
     private val applyWebCameraSelection: (WebControlCommand) -> Boolean,
     private val selectedOption: () -> CameraLensOption?,
     private val resolveCapabilities: (CameraLensOption) -> CameraCapabilities,
@@ -30,6 +31,7 @@ class WebControlCoordinator(
     private val updateParameterSummary: () -> Unit
 ) {
     fun apply(command: WebControlCommand) {
+        command.screenOff?.let(applyScreenControl)
         if (command.stopStreaming || command.streaming == false) {
             stopStreaming("Stopped", true)
             return

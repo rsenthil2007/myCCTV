@@ -37,7 +37,11 @@ object WebControlStates {
         audioRunning: Boolean,
         audioClients: Int,
         audioUrl: String,
-        audioStatus: String
+        audioStatus: String,
+        deviceName: String = "",
+        lanIp: String? = null,
+        httpPort: Int = 41737,
+        screenOff: Boolean = false
     ): WebControlState {
         val exposureRange = capabilities?.exposureCompensationRange
         val selectedCameraKey = selectedCameraOption?.let(repository::controlKeyFor)
@@ -91,7 +95,11 @@ object WebControlStates {
             audioRunning = audioRunning,
             audioClients = audioClients,
             audioUrl = audioUrl,
-            audioStatus = audioStatus
+            audioStatus = audioStatus,
+            deviceName = deviceName,
+            lanIp = lanIp,
+            httpPort = httpPort,
+            screenOff = screenOff
         )
     }
 
@@ -142,7 +150,11 @@ object WebControlStates {
         audioRunning: Boolean,
         audioClients: Int,
         audioUrl: String,
-        audioStatus: String
+        audioStatus: String,
+        deviceName: String = "",
+        lanIp: String? = null,
+        httpPort: Int = 41737,
+        screenOff: Boolean = false
     ): WebControlState {
         return WebControlState(
             versionName = versionName,
@@ -200,7 +212,11 @@ object WebControlStates {
             audioStreaming = audioRunning,
             audioClients = audioClients,
             audioUrl = audioUrl,
-            audioStatus = audioStatus
+            audioStatus = audioStatus,
+            deviceName = deviceName,
+            lanIp = lanIp,
+            httpPort = httpPort,
+            screenOff = screenOff
         )
     }
 }
